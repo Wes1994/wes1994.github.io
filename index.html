@@ -1,86 +1,120 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meu Espaço Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espaço Digital de Wesley</title>
   <style>
-    /* Estilo base: fonte limpa, layout centralizado */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
     body {
       margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #2F3D48;
+      color: #ffffff;
+    }
+    header {
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
       align-items: center;
-      min-height: 100vh;
+      padding: 20px 40px;
+      background-color: #26333d;
     }
-
-    .container {
-      text-align: center;
-      padding: 2rem;
-      max-width: 600px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    }
-
-    h1 {
-      margin-bottom: 0.25em;
-      font-size: 2em;
-    }
-
-    p {
-      margin-top: 0;
-      font-size: 1.1em;
-      color: #666;
-    }
-
-    .links {
-      margin-top: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .links a {
+    nav a {
+      margin-left: 30px;
+      color: #ffffff;
       text-decoration: none;
-      color: #fff;
-      background: #0077cc;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      transition: background 0.3s;
       font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
     }
-
-    .links a:hover {
-      background: #005fa3;
+    nav a:hover {
+      border-color: #6c7c89;
+      background-color: #3a4b59;
     }
-
-    footer {
-      margin-top: 2rem;
-      font-size: 0.85em;
-      color: #aaa;
+    .hero {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+    .hero p {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      text-shadow: 0 0 8px #ffffff55;
+    }
+    .hero h1 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #c9d6e2;
+      margin: 0;
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #c0d2e0;
+      margin: 30px auto 10px;
+      text-align: center;
+    }
+    .sobre-mim, .sobre-curriculo {
+      max-width: 800px;
+      margin: 10px auto 30px;
+      padding: 20px;
+      background-color: #34444f;
+      border-radius: 20px;
+      color: #cfdde9;
+    }
+    .sobre-curriculo {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .curriculo-placeholder {
+      width: 120px;
+      height: 180px;
+      background: #ffffff;
+      filter: blur(8px);
+      border-radius: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .texto-sobre {
+      flex: 1;
+      font-size: 1rem;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Bem-vindo ao meu espaço digital</h1>
-    <p>Aqui você encontra meus projetos, arquivos e ideias.</p>
+  <header>
+    <nav>
+      <a href="#sobre">Descrição</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </header>
 
-    <div class="links">
-      <!-- Link para seus arquivos ou pastas. Basta trocar o href -->
-      <a href="projetos/index.html" target="_blank">🌐 Ver meus projetos</a>
-      <a href="curriculo.pdf" target="_blank">📄 Baixar meu currículo</a>
-      <a href="contato.html" target="_blank">✉️ Entrar em contato</a>
+  <section class="hero">
+    <p>Espaço Digital de Wesley</p>
+    <h1>Seja Bem Vindo!</h1>
+  </section>
+
+  <div class="section-title" id="sobre">Descrição</div>
+  <section class="sobre-mim">
+    Nesse local você encontrará informações básicas sobre o Wesley, seu portifólio, sobre projetos em desenvolvimento ou arquivos compartilhados.
+  </section>
+
+  <div class="section-title">Sobre Mim</div>
+  <section class="sobre-curriculo">
+    <div class="texto-sobre">
+      Trabalhando e estudando sempre visando desenvolvimento físico, mental, profissional e etc. Para construção de um mundo melhor. Tenho minhas áreas de interesse mas isso não impede de buscar sempre novas experiências pra expandir meus horizontes. Vou contribuir sempre da melhor maneira em qualquer área que tiver atuando, pois se não for pra fazer a diferença nesse mundo, minha vida terá sido um fracasso.
     </div>
-
-    <footer>
-      Criado com ♥ por Wesley — hospedado via GitHub Pages
-    </footer>
-  </div>
+    <a href="#">
+      <div class="curriculo-placeholder"></div>
+    </a>
+  </section>
 </body>
 </html>
+
