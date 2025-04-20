@@ -56,18 +56,18 @@
     }
     .hero {
       text-align: center;
-      padding: 40px 20px 10px;
+      padding: 20px 20px 10px;
     }
     .hero p {
       font-family: 'Playfair Display', serif;
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 700;
       color: #ffffff;
       margin-bottom: 8px;
       text-shadow: 0 0 8px #ffffff88;
     }
     .hero h1 {
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: 400;
       color: #c9d6e2;
       margin: 0;
@@ -130,6 +130,7 @@
       gap: 20px;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: center;
       margin-top: 10px;
     }
     .icone {
@@ -141,6 +142,10 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      text-decoration: none;
+    }
+    .icone:hover {
+      background-color: #d3d3d3;
     }
     .popup {
       display: none;
@@ -168,13 +173,17 @@
   </style>
   <script>
     function mostrarPopup(tipo) {
-      const mensagem = tipo === 'whatsapp' ? 'Deseja copiar meu número de whatsapp?' : 'Deseja copiar meu e-mail?';
-      const valor = tipo === 'whatsapp' ? '12997558993' : 'wesley.anunnaki@gmail.com';
+      const mensagens = {
+        whatsapp: {texto: 'Deseja copiar meu número de whatsapp?', valor: '12997558993'},
+        email: {texto: 'Deseja copiar meu e-mail?', valor: 'wesley.anunnaki@gmail.com'},
+        pix: {texto: 'Deseja copiar minha chave Pix?', valor: 'wesley.anunnaki@gmail.com'}
+      };
+      const dados = mensagens[tipo];
       const popup = document.getElementById('popup');
-      popup.querySelector('p').textContent = mensagem;
+      popup.querySelector('p').textContent = dados.texto;
       popup.style.display = 'block';
       document.getElementById('confirmar').onclick = () => {
-        navigator.clipboard.writeText(valor);
+        navigator.clipboard.writeText(dados.valor);
         popup.style.display = 'none';
       };
       document.getElementById('cancelar').onclick = () => popup.style.display = 'none';
@@ -185,6 +194,7 @@
   <header>
     <nav>
       <a href="#sobre">Descrição</a>
+      <a href="#sobre-mim">Sobre Mim</a>
       <a href="#contato">Contato</a>
     </nav>
   </header>
@@ -199,7 +209,7 @@
     Nesse local você encontrará informações básicas sobre mim, meu (futuro) portifólio, meus (futuros) projetos em desenvolvimento dentre outros compartilhamentos.
   </section>
 
-  <div class="section-title">Sobre Mim</div>
+  <div class="section-title" id="sobre-mim">Sobre Mim</div>
   <section class="sobre-curriculo">
     <div class="texto-sobre">
       Trabalhando e estudando sempre em busca de meu desenvolvimento intelectual, moral, profissional e etc. Para construção de um mundo melhor. Apesar de meus interesses específicos isso não impede de buscar novas experiências pra expandir meu potencial. Qualquer que seja a área que eu estiver atuando, farei o meu melhor, pois se não for pra fazer a diferença nesse mundo, terei falhado no meu propósito.
@@ -214,10 +224,11 @@
     <div class="icones">
       <div class="icone" onclick="mostrarPopup('whatsapp')">📱</div>
       <div class="icone" onclick="mostrarPopup('email')">📧</div>
-      <a href="#" class="icone">📷</a>
-      <a href="#" class="icone">📘</a>
-      <a href="#" class="icone">▶️</a>
-      <a href="#" class="icone">🎵</a>
+      <div class="icone" onclick="mostrarPopup('pix')">💸</div>
+      <a href="https://www.instagram.com/anunnakiwr" class="icone" target="_blank">📷</a>
+      <a href="https://www.facebook.com/wesley.anunnaki" class="icone" target="_blank">📘</a>
+      <a href="https://www.youtube.com/@AnunnakiWR" class="icone" target="_blank">▶️</a>
+      <a href="https://open.spotify.com/user/31h7s5xid76y6mn3dxq2vaxz6fpe" class="icone" target="_blank">🎵</a>
     </div>
   </section>
 
