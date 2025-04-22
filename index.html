@@ -50,7 +50,7 @@
       font-weight: 600;
       color: #c0d2e0;
       margin: 30px auto 10px;
-      text-align: center;
+      text-align: center; /* Centraliza o título */
     }
     .sobre-mim, .sobre-curriculo, .contato, .depoimentos {
       max-width: 800px;
@@ -83,7 +83,7 @@
     .texto-sobre {
       flex: 1;
       font-size: 1rem;
-      line-height: 1.6;
+      line-height: 1.4;
     }
     .contato .icones {
       display: flex;
@@ -200,29 +200,6 @@
     .depoimento-texto.expandido {
       max-height: none;
     }
-    #topo-button {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(108, 124, 137, 0.7);
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out;
-      backdrop-filter: blur(5px);
-    }
-    #topo-button.mostrar {
-      opacity: 0.2;
-    }
-    #topo-button:hover {
-      background-color: rgba(108, 124, 137, 0.9);
-      opacity: 0.8;
-      backdrop-filter: blur(7px);
-    }
   </style>
   <script>
     function mostrarPopup(tipo) {
@@ -275,18 +252,6 @@
       div.onclick = () => document.body.removeChild(div);
       document.body.appendChild(div);
     }
-    window.onscroll = function() {
-      const topoButton = document.getElementById('topo-button');
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        topoButton.classList.add('mostrar');
-      } else {
-        topoButton.classList.remove('mostrar');
-      }
-    };
-    function scrollToTop() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
   </script>
 </head>
 <body>
@@ -298,13 +263,13 @@
 
   <div class="section-title" id="sobre">Descrição</div>
   <section class="sobre-mim">
-    Local para você encontrar informações básicas sobre mim, meu (futuro) portifólio, meus (futuros) projetos, dentre outros compartilhamentos.
+    Local pra você encontrar informações básicas sobre mim, meu (futuro) portifólio, meus (futuros) projetos, dentre outros compartilhamentos.
   </section>
 
   <div class="section-title">Sobre Mim</div>
   <section class="sobre-curriculo">
     <div class="texto-sobre">
-      Trabalho e estudo edição de vídeo, mas gosto de me aventurar no design gráfico, em programação via prompt, bem como outras coisas que não cabe citar aqui. Sou usuário entusiasta das Inteligências Artificiais. Gosto de desenhar e dançar. Estou sempre buscando novos aprendizados e experiências."
+      Trabalho e estudo edição de vídeo, mas gosto de me aventurar no design gráfico, na programação via prompt, dentre outras coisas. Sou usuário entusiasta das IAs. Gosto de desenhar e dançar. Estou sempre buscando novos aprendizados e experiências."
     </div>
   </section>
 
@@ -392,6 +357,5 @@
     <button id="confirmar">Sim</button>
     <button id="cancelar">Não</button>
   </div>
-  <button id="topo-button" onclick="scrollToTop()">Retornar ao Topo</button>
 </body>
 </html>
