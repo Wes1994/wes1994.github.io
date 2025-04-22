@@ -1,278 +1,437 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espaço Digital</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #2F3D48;
-      color: #ffffff;
-      padding: 0 5mm;
-      box-sizing: border-box;
-      scrollbar-width: thin;
-      scrollbar-color: #6c7c89 #2F3D48;
-    }
-    body::-webkit-scrollbar {
-      width: 10px;
-    }
-    body::-webkit-scrollbar-track {
-      background: #2F3D48;
-    }
-    body::-webkit-scrollbar-thumb {
-      background-color: #6c7c89;
-      border-radius: 10px;
-    }
-    .hero {
-      text-align: center;
-      padding: 40px 20px 10px;
-    }
-    .hero p {
-      font-family: 'Playfair Display', serif;
-      font-size: 3rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 8px;
-      text-shadow: 0 0 8px #ffffff88;
-    }
-    .hero h1 {
-      font-size: 1rem;
-      font-weight: 400;
-      color: #c9d6e2;
-      margin: 0;
-    }
-    .section-title {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #c0d2e0;
-      margin: 30px auto 10px;
-      text-align: center; /* Centraliza o título */
-    }
-    .sobre-mim, .sobre-curriculo, .contato, .depoimentos {
-      max-width: 800px;
-      margin: 10px auto 30px;
-      padding: 20px;
-      background-color: #34444f;
-      border-radius: 20px;
-      color: #cfdde9;
-      position: relative;
-    }
-    .sobre-curriculo {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      justify-content: space-between;
-      max-height: 11.2em;
-      overflow: auto;
-    }
-    .sobre-curriculo::-webkit-scrollbar {
-      width: 8px;
-    }
-    .sobre-curriculo::-webkit-scrollbar-track {
-      background: #2F3D48;
-      border-radius: 10px;
-    }
-    .sobre-curriculo::-webkit-scrollbar-thumb {
-      background-color: #6c7c89;
-      border-radius: 10px;
-    }
-    .texto-sobre {
-      flex: 1;
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-    .contato .icones {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    .icone {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-      overflow: hidden;
-      background-color: transparent;
-    }
-    .icone img {
-      width: 35px;
-      height: 35px;
-      object-fit: contain;
-    }
-    .icone:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #34444f;
-      padding: 20px;
-      border-radius: 12px;
-      color: #ffffff;
-      z-index: 2000;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-      text-align: center;
-    }
-    .popup button {
-      margin: 10px 10px 0;
-      padding: 8px 14px;
-      background-color: #6c7c89;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .depoimentos-container {
-      max-height: 200px;
-      overflow-y: auto;
-      padding-right: 10px;
-      margin-bottom: 20px;
-    }
-    .depoimentos-container::-webkit-scrollbar {
-      width: 8px;
-    }
-    .depoimentos-container::-webkit-scrollbar-track {
-      background: #2F3D48;
-      border-radius: 10px;
-    }
-    .depoimentos-container::-webkit-scrollbar-thumb {
-      background-color: #6c7c89;
-      border-radius: 10px;
-    }
-    .depoimento-box {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      background-color: #4a5e6c;
-      padding: 15px;
-      border-radius: 12px;
-      align-items: flex-start;
-    }
-    .depoimento-foto {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-top: 5px;
-    }
-    .depoimento-foto img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    .depoimento-conteudo {
-      flex: 1;
-    }
-    .depoimento-nome {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 5px;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .depoimento-texto {
-      font-size: 0.95rem;
-      line-height: 1.4;
-      color: #d4e0e8;
-    }
-    .leia-mais {
-      color: #a0aec0;
-      cursor: pointer;
-      margin-top: 5px;
-      display: none;
-    }
-    .depoimento-texto.expandido {
-      max-height: none;
-    }
-  </style>
-  <script>
-    function mostrarPopup(tipo) {
-      const mensagens = {
-        whatsapp: {texto: 'Deseja copiar meu número de whatsapp?', valor: '12997558993'},
-        email: {texto: 'Deseja copiar meu e-mail?', valor: 'wesley.anunnaki@gmail.com'}
-      };
-      const dados = mensagens[tipo];
-      const popup = document.getElementById('popup');
-      popup.querySelector('p').textContent = dados.texto;
-      popup.style.display = 'block';
-      document.getElementById('confirmar').onclick = () => {
-        navigator.clipboard.writeText(dados.valor);
-        popup.style.display = 'none';
-      };
-      document.getElementById('cancelar').onclick = () => popup.style.display = 'none';
-    }
-    function expandirTexto(elemento) {
-      const textoElemento = elemento.previousElementSibling;
-      textoElemento.classList.toggle('expandido');
-      elemento.textContent = textoElemento.classList.contains('expandido') ? 'Mostrar menos' : 'Leia mais...';
-    }
-    function redirecionarInstagram(nomeUsuario) {
-      const instagramUrl = `https://www.instagram.com/${nomeUsuario}`;
-      window.open(instagramUrl, '_blank');
-    }
-    function expandirImagem(imagemSrc) {
-      const div = document.createElement('div');
-      div.style = `
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espaço Digital</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #2F3D48;
+        color: #ffffff;
+        padding: 0 5mm;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+        scrollbar-color: #6c7c89 #2F3D48;
+        /* Adicionando a textura de fundo */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%234a5568' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"); /* Uma textura SVG bem sutil */
+      }
+      body::-webkit-scrollbar {
+        width: 10px;
+      }
+      body::-webkit-scrollbar-track {
+        background: #2F3D48;
+        border-radius: 10px;
+      }
+      body::-webkit-scrollbar-thumb {
+        background-color: #6c7c89;
+        border-radius: 10px;
+      }
+      .hero {
+        text-align: center;
+        padding: 40px 20px 10px;
+      }
+      .hero p {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem; /* Reduzindo o tamanho da fonte para 2.5rem */
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 8px;
+        text-shadow: 0 0 8px #ffffff88;
+        /* Animação de escala e opacidade */
+        animation: scaleOpacity 2s infinite alternate;
+      }
+      @keyframes scaleOpacity {
+        from {
+          transform: scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+      }
+      .hero h1 {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #c9d6e2;
+        margin: 0;
+        /* Nova animação: pulso */
+        animation: pulse 2s infinite alternate;
+      }
+      @keyframes pulse {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.05);
+        }
+      }
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #a0aec0; /* Cor alterada para um tom mais claro */
+        margin: 30px auto 10px;
+        text-align: center;
+        /* Efeito de brilho no texto */
+        text-shadow: 0 0 5px #a0aec0;
+        transition: text-shadow 0.5s ease;
+      }
+      .section-title:hover {
+        text-shadow: 0 0 10px #a0aec0;
+      }
+      .sobre-mim, .sobre-curriculo, .contato, .depoimentos, .atalhos {
+        max-width: 800px;
+        margin: 10px auto 30px;
+        padding: 20px;
+        background-color: #34444f;
+        border-radius: 20px;
+        color: #cfdde9;
+        position: relative;
+      }
+      .sobre-curriculo {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        justify-content: space-between;
+        max-height: 11.2em;
+        overflow: auto;
+      }
+      .sobre-curriculo::-webkit-scrollbar {
+        width: 8px;
+      }
+      .sobre-curriculo::-webkit-scrollbar-track {
+        background: #2F3D48;
+        border-radius: 10px;
+      }
+      .sobre-curriculo::-webkit-scrollbar-thumb {
+        background-color: #6c7c89;
+        border-radius: 10px;
+      }
+      .texto-sobre {
+        flex: 1;
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+      .contato .icones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center; /* Adicionado para centralizar os ícones */
+        margin-top: 10px;
+      }
+      .icone {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-decoration: none;
+        overflow: hidden;
+        background-color: transparent;
+        transition: transform 0.3s ease; /* Transição suave para o hover */
+      }
+      .icone:hover {
+        transform: scale(1.2); /* Aumenta o tamanho no hover */
+      }
+      .icone img {
+        width: 35px;
+        height: 35px;
+        object-fit: contain;
+      }
+      .popup {
+        display: none;
         position: fixed;
-        top: 0;
-        left: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #34444f;
+        padding: 20px;
+        border-radius: 12px;
+        color: #ffffff;
+        z-index: 2000;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        border: 1px solid #6c7c89;
+      }
+      .popup button {
+        margin: 10px 10px 0;
+        padding: 8px 14px;
+        background-color: #6c7c89;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .popup button:hover {
+        background-color: #8495a3;
+      }
+      .depoimentos-container {
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-bottom: 20px;
+      }
+      .depoimentos-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      .depoimentos-container::-webkit-scrollbar-track {
+        background: #2F3D48;
+        border-radius: 10px;
+      }
+      .depoimentos-container::-webkit-scrollbar-thumb {
+        background-color: #6c7c89;
+        border-radius: 10px;
+      }
+      .depoimento-box {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        background-color: #4a5e6c;
+        padding: 15px;
+        border-radius: 15px; /* Arredondando os cantos dos depoimentos */
+        align-items: flex-start;
+        transition: background-color 0.3s ease;
+      }
+      .depoimento-box:hover {
+        background-color: #5d7280;
+      }
+      .depoimento-foto {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+      .depoimento-foto img {
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.8);
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .depoimento-foto img:hover {
+        transform: scale(1.1);
+      }
+      .depoimento-conteudo {
+        flex: 1;
+      }
+      .depoimento-nome {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .depoimento-nome:hover {
+        color: #a0aec0;
+      }
+      .depoimento-texto {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        color: #d4e0e8;
+      }
+      .leia-mais {
+        color: #a0aec0;
+        cursor: pointer;
+        margin-top: 5px;
+        display: none;
+        transition: color 0.3s ease;
+      }
+      .leia-mais:hover {
+        color: #c0d2e0;
+      }
+      .depoimento-texto.expandido {
+        max-height: none;
+      }
+      .atalhos-lista {
+        list-style: none;
+        padding: 0;
+        margin: 0;
         display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
         justify-content: center;
-        align-items: center;
-        z-index: 3000;
-      `;
-      const img = document.createElement('img');
-      img.src = imagemSrc;
-      img.style = `
-        max-width: 90%;
-        max-height: 90%;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(255,255,255,0.9);
-      `;
-      div.appendChild(img);
-      div.onclick = () => document.body.removeChild(div);
-      document.body.appendChild(div);
-    }
-  </script>
+      }
+      .atalhos-lista li {
+        background-color: #4a5e6c;
+        padding: 10px 15px;
+        border-radius: 12px; /* Arredondando os cantos dos botões */
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .atalhos-lista li:hover {
+        background-color: #6c7c89;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+    <script>
+      let popupElement = null;
+      let isDragging = false;
+      let offset = { x: 0, y: 0 };
+
+      function mostrarPopup(tipo) {
+        const mensagens = {
+          whatsapp: {
+            texto: 'O que você deseja fazer?',
+            opcoes: [
+              { texto: 'Copiar WhatsApp', valor: '12997558993', acao: 'copiar' },
+              { texto: 'Abrir Aplicativo', valor: 'whatsapp://send?phone=5512997558993', acao: 'abrir' }
+            ]
+          },
+          email: {
+            texto: 'O que você deseja fazer?',
+            opcoes: [
+              { texto: 'Copiar Email', valor: 'wesley.anunnaki@gmail.com', acao: 'copiar' },
+              { texto: 'Abrir Aplicativo', valor: 'mailto:wesley.anunnaki@gmail.com', acao: 'abrir' }
+            ]
+          }
+        };
+
+        const dados = mensagens[tipo];
+        const popup = document.getElementById('popup');
+        popup.innerHTML = `<p>${dados.texto}</p>`;
+
+        dados.opcoes.forEach(opcao => {
+          const button = document.createElement('button');
+          button.textContent = opcao.texto;
+          button.onclick = () => {
+            if (opcao.acao === 'copiar') {
+              navigator.clipboard.writeText(opcao.valor);
+            } else if (opcao.acao === 'abrir') {
+              window.location.href = opcao.valor;
+            }
+            popup.style.display = 'none';
+          };
+          popup.appendChild(button);
+        });
+
+        const cancelarButton = document.createElement('button');
+        cancelarButton.textContent = 'Cancelar';
+        cancelarButton.id = 'cancelar';
+        cancelarButton.onclick = () => popup.style.display = 'none';
+        popup.appendChild(cancelarButton);
+
+        popup.style.display = 'block';
+        popupElement = popup;
+
+        // Adiciona eventos de arrastar
+        popup.addEventListener('mousedown', iniciarArrasto);
+        document.addEventListener('mousemove', arrastar);
+        document.addEventListener('mouseup', finalizarArrasto);
+      }
+
+      function expandirTexto(elemento) {
+        const textoElemento = elemento.previousElementSibling;
+        textoElemento.classList.toggle('expandido');
+        elemento.textContent = textoElemento.classList.contains('expandido') ? 'Mostrar menos' : 'Leia mais...';
+      }
+
+      function redirecionarInstagram(nomeUsuario) {
+        const instagramUrl = `https://www.instagram.com/${nomeUsuario}`;
+        window.open(instagramUrl, '_blank');
+      }
+
+      function expandirImagem(imagemSrc) {
+        const div = document.createElement('div');
+        div.style = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 3000;
+        `;
+        const img = document.createElement('img');
+        img.src = imagemSrc;
+        img.style = `
+          max-width: 90%;
+          max-height: 90%;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(255,255,255,0.9);
+        `;
+        div.appendChild(img);
+        div.onclick = () => document.body.removeChild(div);
+        document.body.appendChild(div);
+      }
+
+      function scrollToSection(sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      function iniciarArrasto(e) {
+        if (e.target.tagName === 'P') { // Restringe o arraste ao parágrafo do popup
+            isDragging = true;
+            const rect = popupElement.getBoundingClientRect();
+            offset = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+      }
+
+      function arrastar(e) {
+        if (isDragging && popupElement) {
+            popupElement.style.left = e.clientX - offset.x + 'px';
+            popupElement.style.top = e.clientY - offset.y + 'px';
+        }
+      }
+
+      function finalizarArrasto() {
+        isDragging = false;
+      }
+
+      document.addEventListener('click', (e) => {
+        if (popupElement && !popupElement.contains(e.target) && e.target.id !== 'whatsapp' && e.target.id !== 'email') {
+          popupElement.style.display = 'none';
+          isDragging = false;
+        }
+      });
+    </script>
 </head>
 <body>
-
   <section class="hero">
-    <p>Espaço Digital</p>
+    <p style="white-space: nowrap;">Espaço Digital</p>
     <h1>Seja Bem Vindo!</h1>
   </section>
-
+  <h2 class="section-title">Atalhos</h2>
+  <section class="atalhos">
+    <ul class="atalhos-lista">
+      <li onclick="scrollToSection('sobre')">Descrição</li>
+      <li onclick="scrollToSection('sobre-mim')">Sobre Mim</li>
+      <li onclick="scrollToSection('depoimentos')">Depoimentos</li>
+      <li onclick="scrollToSection('contato')">Contato</li>
+    </ul>
+  </section>
   <div class="section-title" id="sobre">Descrição</div>
   <section class="sobre-mim">
     Local pra você encontrar informações básicas sobre mim, meu (futuro) portifólio, meus (futuros) projetos, dentre outros compartilhamentos.
   </section>
-
   <div class="section-title">Sobre Mim</div>
   <section class="sobre-curriculo">
     <div class="texto-sobre">
       Trabalho e estudo edição de vídeo, mas gosto de me aventurar no design gráfico, na programação via prompt, dentre outras coisas. Sou usuário entusiasta das IAs. Gosto de desenhar e dançar. Estou sempre buscando novos aprendizados e experiências."
     </div>
   </section>
-
   <div class="section-title" id="depoimentos">Depoimentos</div>
   <section class="depoimentos">
     <div class="depoimentos-container">
@@ -281,7 +440,7 @@
           <img src="https://via.placeholder.com/60" alt="Foto Depoente 1" onclick="expandirImagem('https://via.placeholder.com/60')">
         </div>
         <div class="depoimento-conteudo">
-          <a href="https://www.instagram.com/nome_do_depoente1" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente1')">Nome do Depoente 1</a>
+          <a href="https://www.instagram.com/nome_do_depoente1" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente1')">Lucas Andrade</a>
           <p class="depoimento-texto">
             Excelente profissional, super recomendo! O trabalho dele é impecável e o atendimento é nota 10. Muito
             satisfeito com o resultado...
@@ -294,7 +453,7 @@
           <img src="https://via.placeholder.com/60" alt="Foto Depoente 2" onclick="expandirImagem('https://via.placeholder.com/60')">
         </div>
         <div class="depoimento-conteudo">
-          <a href="https://www.instagram.com/nome_do_depoente2" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente2')">Nome do Depoente 2</a>
+          <a href="https://www.instagram.com/nome_do_depoente2" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente2')">Carla Moreira</a>
           <p class="depoimento-texto">
             Trabalho incrível, superou minhas expectativas. Profissional dedicado e talentoso. Recomendo a todos!
             <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
@@ -306,7 +465,7 @@
           <img src="https://via.placeholder.com/60" alt="Foto Depoente 3" onclick="expandirImagem('https://via.placeholder.com/60')">
         </div>
         <div class="depoimento-conteudo">
-          <a href="https://www.instagram.com/nome_do_depoente3" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente3')">Nome do Depoente 3</a>
+          <a href="https://www.instagram.com/nome_do_depoente3" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente3')">Rafael Tavares</a>
           <p class="depoimento-texto">
             Muito bom o trabalho, entrega no prazo e com muita qualidade.
             <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
@@ -318,7 +477,7 @@
           <img src="https://via.placeholder.com/60" alt="Foto Depoente 4" onclick="expandirImagem('https://via.placeholder.com/60')">
         </div>
         <div class="depoimento-conteudo">
-          <a href="https://www.instagram.com/nome_do_depoente4" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente4')">Nome do Depoente 4</a>
+          <a href="https://www.instagram.com/nome_do_depoente4" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente4')">Júlia Martins</a>
           <p class="depoimento-texto">
             Superou as expectativas, recomendo demais o trabalho.
             <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
@@ -327,35 +486,31 @@
       </div>
     </div>
   </section>
-
   <div class="section-title" id="contato">Contato</div>
   <section class="contato">
     <div class="icones">
-  <div class="icone" onclick="mostrarPopup('whatsapp')">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/whatsapp.png" alt="WhatsApp" width="35">
-  </div>
-  <div class="icone" onclick="mostrarPopup('email')">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/gmail.png" alt="Gmail" width="35">
-  </div>
-  <a href="https://www.instagram.com/wesley.buenno" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/instagram.png" alt="Instagram" width="35">
-  </a>
-  <a href="https://www.facebook.com/Wesley.Bueno" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/facebook.png" alt="Facebook" width="35">
-  </a>
-  <a href="https://www.tiktok.com/@wesfbs" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/tik-tok.png" alt="TikTok" width="35">
-  </a>
-  <a href="https://www.youtube.com/@Wesley-FBS" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/youtube.png" alt="YouTube" width="35">
-  </a>
-</div>
+      <div class="icone" id="whatsapp" onclick="mostrarPopup('whatsapp')">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/whatsapp.png" alt="WhatsApp" width="35">
+      </div>
+      <div class="icone" id="email" onclick="mostrarPopup('email')">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/gmail.png" alt="Gmail" width="35">
+      </div>
+      <a href="https://www.instagram.com/wesley.buenno" class="icone" target="_blank">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/instagram.png" alt="Instagram" width="35">
+      </a>
+      <a href="https://www.facebook.com/Wesley.Bueno" class="icone" target="_blank">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/facebook.png" alt="Facebook" width="35">
+      </a>
+      <a href="https://www.tiktok.com/@wesfbs" class="icone" target="_blank">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/tik-tok.png" alt="TikTok" width="35">
+      </a>
+      <a href="https://www.youtube.com/@Wesley-FBS" class="icone" target="_blank">
+        <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/youtube.png" alt="YouTube" width="35">
+      </a>
+    </div>
   </section>
-
   <div class="popup" id="popup">
     <p></p>
-    <button id="confirmar">Sim</button>
-    <button id="cancelar">Não</button>
   </div>
 </body>
 </html>
