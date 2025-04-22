@@ -95,8 +95,9 @@
       color: #c0d2e0;
       margin: 30px auto 10px;
       text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
     }
-    .sobre-mim, .sobre-curriculo, .contato {
+    .sobre-mim, .sobre-curriculo, .contato, .depoimentos {
       max-width: 800px;
       margin: 10px auto 30px;
       padding: 20px;
@@ -131,16 +132,15 @@
     }
     .contato .icones {
       display: flex;
-      gap: 20px;
+      gap: 25px;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
       margin-top: 10px;
     }
     .icone {
-      width: 50px;
-      height: 50px;
-      background-color: #ffffff;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -148,14 +148,15 @@
       cursor: pointer;
       text-decoration: none;
       overflow: hidden;
+      background-color: transparent;
     }
     .icone img {
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
       object-fit: contain;
     }
     .icone:hover {
-      background-color: #d3d3d3;
+      background-color: rgba(255, 255, 255, 0.1);
     }
     .popup {
       display: none;
@@ -180,6 +181,70 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .depoimentos-container {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 10px;
+      margin-bottom: 20px;
+    }
+    .depoimentos-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .depoimentos-container::-webkit-scrollbar-track {
+      background: #2F3D48;
+      border-radius: 10px;
+    }
+    .depoimentos-container::-webkit-scrollbar-thumb {
+      background-color: #6c7c89;
+      border-radius: 10px;
+    }
+    .depoimento-box {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      background-color: #4a5e6c;
+      padding: 15px;
+      border-radius: 12px;
+      align-items: flex-start;
+    }
+    .depoimento-foto {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .depoimento-foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .depoimento-conteudo {
+      flex: 1;
+    }
+    .depoimento-nome {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .depoimento-texto {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: #d4e0e8;
+    }
+    .leia-mais {
+      color: #a0aec0;
+      cursor: pointer;
+      margin-top: 5px;
+      display: none;
+    }
+    .depoimento-texto.expandido {
+      max-height: none;
+    }
   </style>
   <script>
     function mostrarPopup(tipo) {
@@ -197,6 +262,44 @@
       };
       document.getElementById('cancelar').onclick = () => popup.style.display = 'none';
     }
+
+    function expandirTexto(elemento) {
+      const textoElemento = elemento.previousElementSibling;
+      textoElemento.classList.toggle('expandido');
+      elemento.textContent = textoElemento.classList.contains('expandido') ? 'Mostrar menos' : 'Leia mais...';
+    }
+
+    function redirecionarInstagram(nomeUsuario) {
+        const instagramUrl = `https://www.instagram.com/${nomeUsuario}`;
+        window.open(instagramUrl, '_blank');
+    }
+
+    function expandirImagem(imagemSrc) {
+        const div = document.createElement('div');
+        div.style = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        `;
+        const img = document.createElement('img');
+        img.src = imagemSrc;
+        img.style = `
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.9);
+        `;
+        div.appendChild(img);
+        div.onclick = () => document.body.removeChild(div);
+        document.body.appendChild(div);
+    }
   </script>
 </head>
 <body>
@@ -204,6 +307,7 @@
     <nav>
       <a href="#sobre">Descrição</a>
       <a href="#sobre-mim">Sobre Mim</a>
+      <a href="#depoimentos">Depoimentos</a>
       <a href="#contato">Contato</a>
     </nav>
   </header>
@@ -225,26 +329,80 @@
     </div>
   </section>
 
+  <div class="section-title" id="depoimentos">Depoimentos</div>
+  <section class="depoimentos">
+    <div class="depoimentos-container">
+      <div class="depoimento-box">
+        <div class="depoimento-foto">
+          <img src="https://via.placeholder.com/60" alt="Foto Depoente 1" onclick="expandirImagem('https://via.placeholder.com/60')">
+        </div>
+        <div class="depoimento-conteudo">
+          <a href="https://www.instagram.com/nome_do_depoente1" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente1')">Nome do Depoente 1</a>
+          <p class="depoimento-texto">
+            Excelente profissional, super recomendo! O trabalho dele é impecável e o atendimento é nota 10. Muito satisfeito com o resultado...
+            <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
+          </p>
+        </div>
+      </div>
+      <div class="depoimento-box">
+        <div class="depoimento-foto">
+          <img src="https://via.placeholder.com/60" alt="Foto Depoente 2" onclick="expandirImagem('https://via.placeholder.com/60')">
+        </div>
+        <div class="depoimento-conteudo">
+          <a href="https://www.instagram.com/nome_do_depoente2" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente2')">Nome do Depoente 2</a>
+          <p class="depoimento-texto">
+            Trabalho incrível, superou minhas expectativas. Profissional dedicado e talentoso. Recomendo a todos!
+            <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
+          </p>
+        </div>
+      </div>
+      <div class="depoimento-box">
+        <div class="depoimento-foto">
+          <img src="https://via.placeholder.com/60" alt="Foto Depoente 3" onclick="expandirImagem('https://via.placeholder.com/60')">
+        </div>
+        <div class="depoimento-conteudo">
+          <a href="https://www.instagram.com/nome_do_depoente3" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente3')">Nome do Depoente 3</a>
+          <p class="depoimento-texto">
+            Muito bom o trabalho, entrega no prazo e com muita qualidade.
+            <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
+          </p>
+        </div>
+      </div>
+       <div class="depoimento-box">
+        <div class="depoimento-foto">
+          <img src="https://via.placeholder.com/60" alt="Foto Depoente 4" onclick="expandirImagem('https://via.placeholder.com/60')">
+        </div>
+        <div class="depoimento-conteudo">
+          <a href="https://www.instagram.com/nome_do_depoente4" class="depoimento-nome" target="_blank" onclick="redirecionarInstagram('nome_do_depoente4')">Nome do Depoente 4</a>
+          <p class="depoimento-texto">
+           Superou as expectativas, recomendo demais o trabalho.
+            <span class="leia-mais" onclick="expandirTexto(this)">Leia mais...</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="section-title" id="contato">Contato</div>
   <section class="contato">
     <div class="icones">
   <div class="icone" onclick="mostrarPopup('whatsapp')">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/whatsapp.png" alt="WhatsApp" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/whatsapp.png" alt="WhatsApp" width="40">
   </div>
   <div class="icone" onclick="mostrarPopup('email')">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/gmail.png" alt="Gmail" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/gmail.png" alt="Gmail" width="40">
   </div>
   <a href="https://www.instagram.com/wesley.buenno" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/instagram.png" alt="Instagram" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/instagram.png" alt="Instagram" width="40">
   </a>
   <a href="https://www.facebook.com/Wesley.Bueno" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/facebook.png" alt="Facebook" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/facebook.png" alt="Facebook" width="40">
   </a>
   <a href="https://www.tiktok.com/@wesfbs" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/tik-tok.png" alt="TikTok" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/tik-tok.png" alt="TikTok" width="40">
   </a>
   <a href="https://www.youtube.com/@Wesley-FBS" class="icone" target="_blank">
-    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/youtube.png" alt="YouTube" width="30">
+    <img src="https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/Ícones/youtube.png" alt="YouTube" width="40">
   </a>
 </div>
   </section>
