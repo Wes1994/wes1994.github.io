@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Battle City - Final V3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Battle City - Gráficos Jogador Corrigidos</title> <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* Estilos Gerais */
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
@@ -15,8 +14,11 @@
         }
         canvas {
             border: 3px solid #eee; display: block; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            background-color: #1A681A; z-index: 1; position: relative;
+            background-image: url('https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/bgremix.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            z-index: 1; position: relative;
             width: 100%; height: 100%; /* Ocupa o container */
+             image-rendering: pixelated; image-rendering: crisp-edges;
         }
 
         /* --- Tela Inicial --- */
@@ -33,87 +35,38 @@
         #game-container {
             display: none; flex-direction: column; align-items: center; justify-content: center;
             position: relative; width: 95vw; height: 95vh;
-            max-width: 600px; /* Ajustado para retrato */
-            max-height: calc(600px * (16 / 9)); /* Ajustado para retrato */
-            aspect-ratio: 9 / 16; /* Proporção de Retrato */
+            max-width: 600px; max-height: calc(600px * (16 / 9)); aspect-ratio: 9 / 16;
         }
 
         /* --- UI do Jogo (HUD Superior) --- */
         #game-ui {
             position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
             width: 98%; box-sizing: border-box;
-            display: flex; justify-content: space-between; align-items: flex-start; /* Alinha itens no topo */
+            display: flex; justify-content: space-between; align-items: flex-start;
             pointer-events: none; color: #eee; font-size: clamp(0.6em, 2vw, 0.8em);
             text-shadow: 1px 1px 2px black; padding: 8px 12px;
-            z-index: 10; background-color: rgba(0, 0, 0, 0.6); /* Fundo mais escuro/transparente */
+            z-index: 10; background-color: rgba(0, 0, 0, 0.6);
             border-radius: 5px;
         }
-        .hud-item {
-            display: flex; flex-direction: column; align-items: flex-start;
-        }
-        .hud-item label { /* Estilo para os rótulos (Vida, Chances, etc.) */
-            margin-bottom: 4px; /* Espaço abaixo do rótulo */
-            opacity: 0.8; /* Rótulo um pouco mais suave */
-        }
-        .hud-item span { /* Estilo para os valores */
-             font-weight: bold; min-height: 1.2em;
-        }
+        .hud-item { display: flex; flex-direction: column; align-items: flex-start; }
+        .hud-item label { margin-bottom: 4px; opacity: 0.8; }
+        .hud-item span { font-weight: bold; min-height: 1.2em; }
         #hp-container { align-items: flex-start; }
-        #hp-bar { width: clamp(50px, 15vw, 70px); height: 6px; /* Barra mais fina */ background-color: #444; /* Fundo mais escuro */ border: 1px solid #888; border-radius: 2px; overflow: hidden; margin-top: 2px; /* Espaço abaixo do label */ }
+        #hp-bar { width: clamp(50px, 15vw, 70px); height: 6px; background-color: #444; border: 1px solid #888; border-radius: 2px; overflow: hidden; margin-top: 2px; }
         #hp-bar-inner { height: 100%; width: 100%; background-color: #4CAF50; transition: width 0.3s ease, background-color 0.3s ease; }
         #abates-container { align-items: center; flex-grow: 1; text-align: center; }
         #pontos-container { align-items: flex-end; text-align: right; }
 
-
         /* --- Controles Mobile --- */
         #mobile-controls { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; padding: 10px; box-sizing: border-box; justify-content: space-between; align-items: center; z-index: 20; pointer-events: none; }
         .controls-hidden { display: none !important; }
-
-        /* Analógico Virtual */
-        #analog-stick-area {
-            width: clamp(120px, 35vw, 160px); height: clamp(120px, 35vw, 160px);
-            border-radius: 50%; background-color: rgba(80, 80, 80, 0.2); /* Mais transparente */
-            position: relative; pointer-events: auto; margin-left: 15px; border: none;
-        }
-        #analog-handle {
-            width: clamp(40px, 12vw, 50px); height: clamp(40px, 12vw, 50px);
-            border-radius: 50%; background-color: rgba(150, 150, 150, 0.3); /* Mais transparente */
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            pointer-events: none; transition: transform 0.05s linear;
-        }
-
-        /* Botões de Ação */
-        #action-buttons {
-            display: flex; flex-direction: column-reverse; /* Inverte ordem: Tiro em cima, Pause embaixo */
-            align-items: flex-end;
-            gap: 10px; position: fixed; bottom: 15px; right: 15px;
-            pointer-events: auto;
-        }
-        .mobile-button { /* Estilo base para botões de ação */
-            background-color: rgba(80, 80, 80, 0.2); /* Mais transparente */
-            border: none; /* Sem borda */
-            color: rgba(255, 255, 255, 0.5); /* Cor do ícone mais suave */
-            border-radius: 50%;
-            width: clamp(65px, 17vw, 80px); /* Botão de tiro maior */
-            height: clamp(65px, 17vw, 80px);
-            display: flex; justify-content: center; align-items: center;
-            font-size: clamp(1.8em, 6vw, 2.4em); /* Ícone maior */
-            cursor: pointer; user-select: none; pointer-events: auto;
-            transition: background-color 0.1s ease;
-        }
+        #analog-stick-area { width: clamp(120px, 35vw, 160px); height: clamp(120px, 35vw, 160px); border-radius: 50%; background-color: rgba(80, 80, 80, 0.2); position: relative; pointer-events: auto; margin-left: 15px; border: none; }
+        #analog-handle { width: clamp(40px, 12vw, 50px); height: clamp(40px, 12vw, 50px); border-radius: 50%; background-color: rgba(150, 150, 150, 0.3); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; transition: transform 0.05s linear; }
+        #action-buttons { display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 10px; position: fixed; bottom: 15px; right: 15px; pointer-events: auto; }
+        .mobile-button { background-color: rgba(80, 80, 80, 0.2); border: none; color: rgba(255, 255, 255, 0.5); border-radius: 50%; width: clamp(65px, 17vw, 80px); height: clamp(65px, 17vw, 80px); display: flex; justify-content: center; align-items: center; font-size: clamp(1.8em, 6vw, 2.4em); cursor: pointer; user-select: none; pointer-events: auto; transition: background-color 0.1s ease; }
         .mobile-button:active { background-color: rgba(120, 120, 120, 0.3); }
-
-        #pause-button-mobile {
-             display: none; /* Controlado via JS */
-             width: clamp(50px, 13vw, 60px); /* Tamanho menor que tiro */
-             height: clamp(50px, 13vw, 60px);
-             font-size: clamp(1.1em, 3.5vw, 1.3em);
-             z-index: 25;
-             /* order removido, usa flex-direction: column-reverse */
-         }
-         #pause-button-mobile span { display: block; line-height: 1; }
-         /* Botão de Toggle Removido */
-
+        #pause-button-mobile { display: none; width: clamp(50px, 13vw, 60px); height: clamp(50px, 13vw, 60px); font-size: clamp(1.1em, 3.5vw, 1.3em); z-index: 25; }
+        #pause-button-mobile span { display: block; line-height: 1; }
 
         /* --- Menu de Pausa --- */
         #pause-menu { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(1.2em, 4vw, 1.5em); text-align: center; padding: 20px 30px; background-color: rgba(0, 0, 0, 0.85); border-radius: 10px; display: none; text-shadow: 2px 2px 4px black; z-index: 30; color: #eee; flex-direction: column; gap: 10px; }
@@ -221,9 +174,10 @@
         const ENEMY_SPEED = 1.2;
         const BULLET_SPEED_PLAYER = 5;
         const BULLET_SPEED_ENEMY = 3.5;
-        const TANK_SIZE = 60; // Tamanho reduzido
-        const BULLET_WIDTH = 8; // Ajustado para novo tamanho
-        const BULLET_HEIGHT = 14; // Ajustado
+        const PLAYER_TANK_SIZE = 120; // Tamanho do jogador aumentado
+        const ENEMY_TANK_SIZE = 60;   // Tamanho do inimigo mantido
+        const BULLET_WIDTH = 10; // Ajustado para novo tamanho médio
+        const BULLET_HEIGHT = 18; // Ajustado
         const ENEMY_SHOOT_CHANCE = 0.015;
         const ENEMY_CHANGE_DIRECTION_CHANCE = 0.02;
         const MAX_ENEMIES_ON_SCREEN = 3;
@@ -247,7 +201,7 @@
         let currentPhase = 1;
         let killsThisPhase = 0;
         let killsNeededThisPhase = 0;
-        let enemiesSpawnedThisPhase = 0; // Novo contador de spawn
+        let enemiesSpawnedThisPhase = 0;
         let animationFrameId = null;
         let isTouchDevice = false;
         const keysPressed = { up: false, down: false, left: false, right: false };
@@ -259,6 +213,43 @@
         const enemies = [];
         const enemyBullets = [];
 
+        // --- Pré-carregamento das Imagens do Jogador ---
+        const playerImages = {};
+        const playerImageSources = { // URLs corrigidos e mapeamento Cima/Baixo corrigido
+            'up':         'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersFrent.png', // Cima
+            'down':       'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersTras.png',   // Baixo
+            'left':       'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersEsq.png',
+            'right':      'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersDir.png',
+            'up-left':    'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersCimEsq.png',
+            'up-right':   'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersCimDir.png',
+            'down-left':  'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersBaiEsq.png',
+            'down-right': 'https://raw.githubusercontent.com/Wes1994/wes1994.github.io/main/BattleCity/Graficos%20Personagem/PersBaiDir.png'
+        };
+        let imagesLoaded = 0;
+        const totalImages = Object.keys(playerImageSources).length;
+
+        function preloadImages(callback) {
+            imagesLoaded = 0;
+            for (const direction in playerImageSources) {
+                playerImages[direction] = new Image();
+                playerImages[direction].onload = () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        if (callback) callback();
+                    }
+                };
+                playerImages[direction].onerror = () => {
+                    console.error(`Erro ao carregar imagem: ${playerImageSources[direction]}`);
+                    imagesLoaded++; // Conta erro para não travar
+                    if (imagesLoaded === totalImages) {
+                        if (callback) callback();
+                    }
+                };
+                playerImages[direction].src = playerImageSources[direction];
+            }
+        }
+
+
         // --- Sons (Simulados) ---
         const playSound = (type) => { /* Silenciado */ };
         const shootSound = { play: () => playSound('Tiro') };
@@ -269,8 +260,17 @@
         const gameOverSound = { play: () => playSound('Game Over') };
 
         // --- Funções do Jogador ---
-        function createPlayer(isRespawn = false) { /* ... (sem mudanças) ... */
-            const startX = canvas.width / 2 - TANK_SIZE / 2; const startY = canvas.height - TANK_SIZE - 40; const newPlayer = { x: startX, y: startY, width: TANK_SIZE, height: TANK_SIZE, dx: 0, dy: 0, speed: PLAYER_SPEED, direction: 'up', color: "#6495ED", trackColor: "#4682B4", gunColor: "#A9A9A9", invulnerable: true, invulnerabilityEndTime: Date.now() + INVULNERABILITY_DURATION_SPAWN, visible: true }; if (!isRespawn) { playerLives = MAX_LIVES; } playerHP = MAX_HP; updateHpBar(); updateInfoDisplays(); return newPlayer;
+        function createPlayer(isRespawn = false) {
+            const startX = canvas.width / 2 - PLAYER_TANK_SIZE / 2; // Usa tamanho do jogador
+            const startY = canvas.height - PLAYER_TANK_SIZE - 40; // Usa tamanho do jogador
+            const newPlayer = {
+                x: startX, y: startY,
+                width: PLAYER_TANK_SIZE, height: PLAYER_TANK_SIZE, // Tamanho do jogador
+                dx: 0, dy: 0, speed: PLAYER_SPEED, direction: 'up',
+                invulnerable: true, invulnerabilityEndTime: Date.now() + INVULNERABILITY_DURATION_SPAWN, visible: true
+            };
+            if (!isRespawn) { playerLives = MAX_LIVES; }
+            playerHP = MAX_HP; updateHpBar(); updateInfoDisplays(); return newPlayer;
         }
         function updatePlayerInvulnerability() { /* ... (sem mudanças) ... */
              if (playerTank && playerTank.invulnerable) { if (Date.now() >= playerTank.invulnerabilityEndTime) { playerTank.invulnerable = false; playerTank.visible = true; } else { playerTank.visible = (Date.now() % 400 < 200); } }
@@ -292,20 +292,14 @@
         }
 
         // --- Funções dos Inimigos ---
-        function createEnemy() {
-             // Verifica se pode spawnar (limite na tela E limite total da fase)
-             if (enemies.length >= MAX_ENEMIES_ON_SCREEN || enemiesSpawnedThisPhase >= killsNeededThisPhase || gameState === 'start' || gameState === 'gameOver' || gameState === 'phaseComplete') {
-                 return;
-             }
-             let x, y, attempts = 0; const maxAttempts = 50;
-             do { x = Math.random() * (canvas.width - TANK_SIZE); y = Math.random() * (canvas.height / 2 - TANK_SIZE); attempts++; } while (isOverlapping(x, y, TANK_SIZE, TANK_SIZE, enemies.concat(playerTank ? [playerTank] : [])) && attempts < maxAttempts);
-             if (attempts >= maxAttempts) { return; }
-             const initialDirection = ['up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left', 'down-right'][Math.floor(Math.random() * 8)];
-             const enemy = { id: Date.now() + Math.random(), x: x, y: y, width: TANK_SIZE, height: TANK_SIZE, dx: 0, dy: 0, speed: ENEMY_SPEED, direction: initialDirection, color: "#B22222", trackColor: "#8B0000", gunColor: "#696969", shootCooldown: Math.random() * 150 + 100 };
-             setEnemyDirection(enemy, initialDirection);
-             enemies.push(enemy);
-             enemiesSpawnedThisPhase++; // Incrementa contador de spawn da fase
-             // console.log(`Enemy spawned (${enemiesSpawnedThisPhase}/${killsNeededThisPhase})`); // Log para debug
+        function createEnemy() { // Usa ENEMY_TANK_SIZE
+             if (enemies.length >= MAX_ENEMIES_ON_SCREEN || enemiesSpawnedThisPhase >= killsNeededThisPhase || gameState === 'start' || gameState === 'gameOver' || gameState === 'phaseComplete') { return; } let x, y, attempts = 0; const maxAttempts = 50;
+             do { x = Math.random() * (canvas.width - ENEMY_TANK_SIZE); y = Math.random() * (canvas.height / 2 - ENEMY_TANK_SIZE); attempts++; } while (isOverlapping(x, y, ENEMY_TANK_SIZE, ENEMY_TANK_SIZE, enemies.concat(playerTank ? [playerTank] : [])) && attempts < maxAttempts);
+             if (attempts >= maxAttempts) { return; } const initialDirection = ['up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left', 'down-right'][Math.floor(Math.random() * 8)];
+             const enemy = { id: Date.now() + Math.random(), x: x, y: y,
+                            width: ENEMY_TANK_SIZE, height: ENEMY_TANK_SIZE, // Tamanho do inimigo
+                            dx: 0, dy: 0, speed: ENEMY_SPEED, direction: initialDirection, color: "#B22222", trackColor: "#8B0000", gunColor: "#696969", shootCooldown: Math.random() * 150 + 100 };
+             setEnemyDirection(enemy, initialDirection); enemies.push(enemy); enemiesSpawnedThisPhase++;
         }
         function moveEnemies() { /* ... (sem mudanças) ... */
             if (gameState !== 'playing') return; enemies.forEach((enemy, index) => { enemy.shootCooldown = Math.max(0, enemy.shootCooldown - 1); let moveX = enemy.dx; let moveY = enemy.dy; let currentSpeed = enemy.speed; if (moveX !== 0 && moveY !== 0) { currentSpeed *= DIAGONAL_SPEED_MULTIPLIER; } let nextEnemyX = enemy.x + moveX * currentSpeed; let nextEnemyY = enemy.y + moveY * currentSpeed; let collidedWithBorder = false; if (nextEnemyX <= 0 || nextEnemyX >= canvas.width - enemy.width) { enemy.dx *= -1; nextEnemyX = enemy.x; collidedWithBorder = true; } if (nextEnemyY <= 0 || nextEnemyY >= canvas.height - enemy.height) { enemy.dy *= -1; nextEnemyY = enemy.y; collidedWithBorder = true; } let collidedWithOther = false; const enemyRect = { x: nextEnemyX, y: nextEnemyY, width: enemy.width, height: enemy.height }; const collisionTargets = enemies.concat( (playerTank && !playerTank.invulnerable) ? [playerTank] : [] ); for (let k = 0; k < collisionTargets.length; k++) { const otherTank = collisionTargets[k]; if (enemy === otherTank) continue; if (isColliding(enemyRect, otherTank)) { collidedWithOther = true; if (moveX !== 0) { enemy.dx *= -1; nextEnemyX = enemy.x; } if (moveY !== 0) { enemy.dy *= -1; nextEnemyY = enemy.y; } setEnemyDirection(enemy, getRandomDifferentDirection(enemy.direction, true)); break; } } enemy.x = nextEnemyX; enemy.y = nextEnemyY; if (collidedWithBorder || collidedWithOther || Math.random() < ENEMY_CHANGE_DIRECTION_CHANCE) { setEnemyDirection(enemy, getRandomDifferentDirection(enemy.direction, true)); } if (enemy.shootCooldown <= 0 && Math.random() < ENEMY_SHOOT_CHANCE) { shootEnemyBullet(enemy); enemy.shootCooldown = Math.random() * 200 + 150; } });
@@ -321,8 +315,41 @@
         }
 
         // --- Funções das Balas ---
-        function createBullet(tank, speed, direction, owner) { /* ... (sem mudanças) ... */
-            const currentBulletWidth = BULLET_WIDTH; const currentBulletHeight = BULLET_HEIGHT; let bulletX = tank.x + tank.width / 2 - currentBulletWidth / 2; let bulletY = tank.y + tank.height / 2 - currentBulletHeight / 2; let dx = 0, dy = 0; switch (direction) { case 'up': dy = -speed; bulletY = tank.y - currentBulletHeight; break; case 'down': dy = speed; bulletY = tank.y + tank.height; break; case 'left': dx = -speed; bulletX = tank.x - currentBulletWidth; break; case 'right': dx = speed; bulletX = tank.x + tank.width; break; case 'up-left': dx = -speed * DIAGONAL_SPEED_MULTIPLIER; dy = -speed * DIAGONAL_SPEED_MULTIPLIER; bulletX = tank.x - currentBulletWidth / 2; bulletY = tank.y - currentBulletHeight / 2; break; case 'up-right': dx = speed * DIAGONAL_SPEED_MULTIPLIER; dy = -speed * DIAGONAL_SPEED_MULTIPLIER; bulletX = tank.x + tank.width - currentBulletWidth / 2; bulletY = tank.y - currentBulletHeight / 2; break; case 'down-left': dx = -speed * DIAGONAL_SPEED_MULTIPLIER; dy = speed * DIAGONAL_SPEED_MULTIPLIER; bulletX = tank.x - currentBulletWidth / 2; bulletY = tank.y + tank.height - currentBulletHeight / 2; break; case 'down-right': dx = speed * DIAGONAL_SPEED_MULTIPLIER; dy = speed * DIAGONAL_SPEED_MULTIPLIER; bulletX = tank.x + tank.width - currentBulletWidth / 2; bulletY = tank.y + tank.height - currentBulletHeight / 2; break; } return { x: bulletX, y: bulletY, width: currentBulletWidth, height: currentBulletHeight, dx: dx, dy: dy, owner: owner };
+        function createBullet(tank, speed, direction, owner) { // Ajusta posição inicial da bala
+            const currentBulletWidth = BULLET_WIDTH; const currentBulletHeight = BULLET_HEIGHT;
+            // Posição inicial no centro do tanque
+            let bulletX = tank.x + tank.width / 2 - currentBulletWidth / 2;
+            let bulletY = tank.y + tank.height / 2 - currentBulletHeight / 2;
+            let dx = 0, dy = 0;
+            const offsetMultiplier = 0.6; // Quão longe do centro a bala aparece
+
+            switch (direction) {
+                case 'up': dy = -speed; bulletY = tank.y - currentBulletHeight; break;
+                case 'down': dy = speed; bulletY = tank.y + tank.height; break;
+                case 'left': dx = -speed; bulletX = tank.x - currentBulletWidth; break;
+                case 'right': dx = speed; bulletX = tank.x + tank.width; break;
+                case 'up-left':
+                    dx = -speed * DIAGONAL_SPEED_MULTIPLIER; dy = -speed * DIAGONAL_SPEED_MULTIPLIER;
+                    bulletX = tank.x + tank.width * (0.5 - offsetMultiplier / 2) - currentBulletWidth / 2;
+                    bulletY = tank.y + tank.height * (0.5 - offsetMultiplier / 2) - currentBulletHeight / 2;
+                    break;
+                case 'up-right':
+                    dx = speed * DIAGONAL_SPEED_MULTIPLIER; dy = -speed * DIAGONAL_SPEED_MULTIPLIER;
+                    bulletX = tank.x + tank.width * (0.5 + offsetMultiplier / 2) - currentBulletWidth / 2;
+                    bulletY = tank.y + tank.height * (0.5 - offsetMultiplier / 2) - currentBulletHeight / 2;
+                    break;
+                case 'down-left':
+                    dx = -speed * DIAGONAL_SPEED_MULTIPLIER; dy = speed * DIAGONAL_SPEED_MULTIPLIER;
+                    bulletX = tank.x + tank.width * (0.5 - offsetMultiplier / 2) - currentBulletWidth / 2;
+                    bulletY = tank.y + tank.height * (0.5 + offsetMultiplier / 2) - currentBulletHeight / 2;
+                    break;
+                case 'down-right':
+                    dx = speed * DIAGONAL_SPEED_MULTIPLIER; dy = speed * DIAGONAL_SPEED_MULTIPLIER;
+                    bulletX = tank.x + tank.width * (0.5 + offsetMultiplier / 2) - currentBulletWidth / 2;
+                    bulletY = tank.y + tank.height * (0.5 + offsetMultiplier / 2) - currentBulletHeight / 2;
+                    break;
+            }
+            return { x: bulletX, y: bulletY, width: currentBulletWidth, height: currentBulletHeight, dx: dx, dy: dy, owner: owner };
         }
         function moveBullets() { /* ... (sem mudanças) ... */
              if (gameState !== 'playing') return; const currentBulletSpeedPlayer = BULLET_SPEED_PLAYER; const currentBulletSpeedEnemy = BULLET_SPEED_ENEMY; for (let i = bullets.length - 1; i >= 0; i--) { const b = bullets[i]; b.x += b.dx; b.y += b.dy; if (b.x < -b.width || b.x > canvas.width || b.y < -b.height || b.y > canvas.height) bullets.splice(i, 1); } for (let i = enemyBullets.length - 1; i >= 0; i--) { const b = enemyBullets[i]; b.x += b.dx; b.y += b.dy; if (b.x < -b.width || b.x > canvas.width || b.y < -b.height || b.y > canvas.height) enemyBullets.splice(i, 1); }
@@ -336,8 +363,7 @@
                  if (killsThisPhase >= killsNeededThisPhase) {
                      phaseCompleteSequence();
                  } else if (enemiesSpawnedThisPhase < killsNeededThisPhase) { // Só spawna se o total da fase não foi atingido
-                     // E também verifica o limite na tela antes de chamar createEnemy
-                     if (enemies.length < MAX_ENEMIES_ON_SCREEN) {
+                     if (enemies.length < MAX_ENEMIES_ON_SCREEN) { // E se houver espaço na tela
                          setTimeout(createEnemy, 750);
                      }
                  }
@@ -369,7 +395,8 @@
             bullets.length = 0; enemies.length = 0; enemyBullets.length = 0;
             resizeCanvas(); playerTank = createPlayer(false);
             // Spawna inimigos iniciais (até o limite da tela E o limite da fase)
-            for(let i = 0; i < MAX_ENEMIES_ON_SCREEN && i < killsNeededThisPhase; i++) {
+            for(let i = 0; i < MAX_ENEMIES_ON_SCREEN && enemiesSpawnedThisPhase < killsNeededThisPhase; i++) {
+                 // A função createEnemy agora incrementa enemiesSpawnedThisPhase
                  setTimeout(createEnemy, i * 200);
             }
             gameOverMessage.style.display = 'none'; winMessage.style.display = 'none'; pauseMenu.style.display = 'none';
@@ -390,7 +417,7 @@
              bullets.length = 0; enemies.length = 0; enemyBullets.length = 0;
              if(playerTank) { playerTank.invulnerable = true; playerTank.invulnerabilityEndTime = Date.now() + INVULNERABILITY_DURATION_SPAWN; playerTank.visible = true; playerHP = MAX_HP; updateHpBar(); } else { playerTank = createPlayer(true); }
              // Spawna inimigos iniciais da nova fase
-             for(let i = 0; i < MAX_ENEMIES_ON_SCREEN && i < killsNeededThisPhase; i++) {
+             for(let i = 0; i < MAX_ENEMIES_ON_SCREEN && enemiesSpawnedThisPhase < killsNeededThisPhase; i++) {
                   setTimeout(createEnemy, i * 200);
              }
              updateInfoDisplays(); winMessage.style.display = 'none'; gameState = 'playing'; if (!animationFrameId) { gameLoop(); }
@@ -413,15 +440,49 @@
 
 
         // --- Funções de Desenho ---
-        function drawGrassBackground() { /* ... (sem mudanças) ... */
-             ctx.fillStyle = '#1A681A'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; for (let i = 0; i < canvas.width; i += 12) { for (let j = 0; j < canvas.height; j += 12) { if (Math.random() > 0.75) { ctx.fillRect(i + Math.random()*6, j + Math.random()*6, 2, (Math.random() * 4 + 2)); } } } ctx.fillStyle = 'rgba(100, 180, 100, 0.1)'; for (let i = 0; i < canvas.width; i += 18) { for (let j = 0; j < canvas.height; j += 18) { if (Math.random() > 0.85) { ctx.beginPath(); ctx.arc(i + Math.random()*9, j + Math.random()*9, (Math.random() * 1.2 + 0.8), 0, Math.PI * 2); ctx.fill(); } } }
+        function drawGrassBackground() { /* ... (removido) ... */ } // Não é mais necessário
+        function draw() {
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+             // Fundo é desenhado via CSS
+             if (playerTank && playerTank.visible) { drawTank(playerTank); }
+             enemies.forEach(drawTank);
+             ctx.fillStyle = '#FFFF00'; bullets.forEach(b => { ctx.fillRect(b.x, b.y, b.width, b.height); });
+             ctx.fillStyle = '#FF6347'; enemyBullets.forEach(b => { ctx.fillRect(b.x, b.y, b.width, b.height); });
         }
-        function draw() { /* ... (sem mudanças) ... */
-             ctx.clearRect(0, 0, canvas.width, canvas.height); drawGrassBackground(); if (playerTank && playerTank.visible) { drawTank(playerTank); } enemies.forEach(drawTank); ctx.fillStyle = '#FFFF00'; bullets.forEach(b => { ctx.fillRect(b.x, b.y, b.width, b.height); }); ctx.fillStyle = '#FF6347'; enemyBullets.forEach(b => { ctx.fillRect(b.x, b.y, b.width, b.height); });
+        function drawTank(tank) { // Corrigido para preservar aspect ratio da imagem
+             const x = tank.x, y = tank.y, w = tank.width, h = tank.height;
+
+             if (tank === playerTank) { // Desenha imagem para o jogador
+                 const img = playerImages[tank.direction];
+                 if (img && img.complete && img.naturalHeight !== 0) {
+                     ctx.save();
+                     if (tank.invulnerable && !tank.visible) { ctx.globalAlpha = 0.4; }
+                     else { ctx.globalAlpha = 1.0; }
+
+                     // Preserva aspect ratio
+                     const imgRatio = img.naturalWidth / img.naturalHeight;
+                     let drawW = w;
+                     let drawH = h;
+                     // Calcula dimensões para caber sem distorcer
+                     if (w / h > imgRatio) { // Área do tanque é mais larga que a imagem
+                         drawW = h * imgRatio;
+                     } else { // Área do tanque é mais alta (ou quadrada igual)
+                         drawH = w / imgRatio;
+                     }
+                     // Centraliza a imagem dentro da área do tanque (w x h)
+                     const drawX = x + (w - drawW) / 2;
+                     const drawY = y + (h - drawH) / 2;
+
+                     ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                     ctx.restore();
+                 } else { // Fallback
+                     ctx.fillStyle = "#FFF"; ctx.fillRect(x, y, w, h);
+                 }
+             } else { // Desenha retângulos rotacionados para inimigos
+                 const cx = x + w / 2, cy = y + h / 2; ctx.save(); ctx.translate(cx, cy); let angle = 0; switch (tank.direction) { case 'up': angle = 0; break; case 'up-right': angle = Math.PI / 4; break; case 'right': angle = Math.PI / 2; break; case 'down-right': angle = 3 * Math.PI / 4; break; case 'down': angle = Math.PI; break; case 'down-left': angle = -3 * Math.PI / 4; break; case 'left': angle = -Math.PI / 2; break; case 'up-left': angle = -Math.PI / 4; break; } ctx.rotate(angle); const trackW = w * 0.2, bodyW = w - 2 * trackW, bodyH = h * 0.8; const gunL = h * 0.5, gunW = w * 0.15; let bodyC = tank.color, trackC = tank.trackColor; ctx.fillStyle = trackC; ctx.fillRect(-w / 2, -h / 2, trackW, h); ctx.fillRect(w / 2 - trackW, -h / 2, trackW, h); ctx.fillStyle = bodyC; ctx.fillRect(-bodyW / 2, -bodyH / 2, bodyW, bodyH); ctx.fillStyle = bodyC; ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 1; const turretSize = bodyW * 0.6; ctx.fillRect(-turretSize / 2, -turretSize / 2, turretSize, turretSize); ctx.strokeRect(-turretSize / 2, -turretSize / 2, turretSize, turretSize); ctx.fillStyle = tank.gunColor; ctx.fillRect(-gunW / 2, -h / 2 - gunL + bodyH/2, gunW, gunL); ctx.restore();
+             }
         }
-        function drawTank(tank) { /* ... (sem mudanças) ... */
-             const x = tank.x, y = tank.y, w = tank.width, h = tank.height; const cx = x + w / 2, cy = y + h / 2; ctx.save(); ctx.translate(cx, cy); let angle = 0; switch (tank.direction) { case 'up': angle = 0; break; case 'up-right': angle = Math.PI / 4; break; case 'right': angle = Math.PI / 2; break; case 'down-right': angle = 3 * Math.PI / 4; break; case 'down': angle = Math.PI; break; case 'down-left': angle = -3 * Math.PI / 4; break; case 'left': angle = -Math.PI / 2; break; case 'up-left': angle = -Math.PI / 4; break; } ctx.rotate(angle); const trackW = w * 0.2, bodyW = w - 2 * trackW, bodyH = h * 0.8; const gunL = h * 0.5, gunW = w * 0.15; let bodyC = tank.color, trackC = tank.trackColor; if (tank === playerTank && tank.invulnerable && !tank.visible) { bodyC = "#A0A0FF"; trackC = "#8080DD"; } ctx.fillStyle = trackC; ctx.fillRect(-w / 2, -h / 2, trackW, h); ctx.fillRect(w / 2 - trackW, -h / 2, trackW, h); ctx.fillStyle = bodyC; ctx.fillRect(-bodyW / 2, -bodyH / 2, bodyW, bodyH); ctx.fillStyle = bodyC; ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 1; const turretSize = bodyW * 0.6; ctx.fillRect(-turretSize / 2, -turretSize / 2, turretSize, turretSize); ctx.strokeRect(-turretSize / 2, -turretSize / 2, turretSize, turretSize); ctx.fillStyle = tank.gunColor; ctx.fillRect(-gunW / 2, -h / 2 - gunL + bodyH/2, gunW, gunL); ctx.restore();
-        }
+
 
         // --- Loop Principal ---
         function gameLoop() { /* ... (sem mudanças) ... */
@@ -440,7 +501,10 @@
 
         // --- Controles e Event Listeners ---
         function setupEventListeners() {
-            startButton.addEventListener('click', startGame);
+            startButton.addEventListener('click', () => {
+                if (imagesLoaded === totalImages) { startGame(); }
+                else { console.log("Aguardando imagens..."); /* Ou mostra mensagem na UI */ }
+            });
             restartButton.addEventListener('click', restartGame);
             restartPauseButton.addEventListener('click', restartGame);
             nextPhaseButton.addEventListener('click', nextPhase);
@@ -495,8 +559,12 @@
         window.onload = () => {
             detectTouch();
             setupEventListeners();
-            showStartScreen();
-            resizeCanvas(); // Chama resize inicial
+            // Pré-carrega as imagens ANTES de mostrar a tela inicial ou iniciar o jogo
+            preloadImages(() => {
+                // Este callback será chamado quando todas as imagens carregarem
+                showStartScreen(); // Mostra a tela inicial após carregar
+                resizeCanvas(); // Chama resize inicial
+            });
         };
 
     </script>
