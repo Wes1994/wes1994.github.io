@@ -326,7 +326,7 @@
         // Gerenciador de Áudio da Tela Inicial e Jogo
         const AUDIO = {
             intro: new Audio('https://wes1994.github.io/Zona%20de%20Batalha/%C3%81udios/ZB%20-%20Intro.MP3'),
-            bgm: new Audio('https://wes1994.github.io/Zona%20de%20Batalha/%C3%81udios/ZB%20-%20CampodeBatalha.mp3'),
+            bgm: new Audio('https://wes1994.github.io/Zona%20de%20Batalha/%C3%81udios/ZB%20-%20CampodeBatalha.MP3'),
             explosionSrc: 'https://wes1994.github.io/Zona%20de%20Batalha/%C3%81udios/ZB%20-%20Explos%C3%A3o.mp3',
             explosionPool: [],
             poolIndex: 0,
@@ -341,7 +341,7 @@
                 for (let i = 0; i < 10; i++) {
                     const aud = new Audio(this.explosionSrc);
                     aud.volume = 0.6;
-                    aud.load(); // Força o navegador a pré-carregar na memória
+                    aud.preload = 'auto'; // Carrega suavemente na memória
                     this.explosionPool.push(aud);
                 }
 
@@ -351,10 +351,8 @@
                     if (STATE.status === 'startScreen' && this.intro.paused) {
                         this.playIntro();
                     }
-                    // Desbloqueia a pool de explosões tocando em silêncio no primeiro clique (evita lag)
-                    this.explosionPool.forEach(a => {
-                        a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {});
-                    });
+                    // Removido o loop que tocava as 10 explosões simultaneamente. 
+                    // Isso evita que a prévia (iframe) bloqueie o áudio por spam.
                     document.removeEventListener('click', unlockAudio);
                     document.removeEventListener('touchstart', unlockAudio);
                 };
@@ -381,8 +379,13 @@
             playExplosion() {
                 // Pega a próxima explosão da piscina para tocar instantaneamente
                 const exp = this.explosionPool[this.poolIndex];
+                exp.pause(); // Garante que zera o estado antes de tocar
                 exp.currentTime = 0;
-                exp.play().catch(e => {});
+                
+                const playPromise = exp.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {}); // Captura erros silenciosamente na prévia
+                }
                 
                 // Avança o índice (0 a 9)
                 this.poolIndex = (this.poolIndex + 1) % this.explosionPool.length;
