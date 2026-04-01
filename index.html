@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- Adicionado maximum-scale=5.0 para permitir o movimento de pinça (zoom) do celular -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Espaço Digital</title>
@@ -30,7 +29,7 @@
       @keyframes scaleOpacity { to { transform: scale(1.05); opacity: 0.9; } }
       @keyframes pulse { to { transform: scale(1.025); } }
 
-      /* Títulos agora são botões clicáveis */
+      /* Títulos clicáveis */
       .section-title {
         font-size: 1.5rem; 
         font-weight: 600; color: #a0aec0;
@@ -66,13 +65,20 @@
       }
       .atalhos-lista li {
         flex: 0 0 auto; 
-        background-color: #4a5e6c; padding: 10px 15px; border-radius: 12px; cursor: pointer;
+        background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
         transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        height: 42px; /* Altura padronizada */
+        box-sizing: border-box; display: flex; align-items: center; justify-content: center;
       }
       .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
       .atalhos-lista::-webkit-scrollbar { height: 6px; }
       .atalhos-lista::-webkit-scrollbar-track { background: transparent; }
       .atalhos-lista::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
+
+      /* Ajustes específicos de largura dos atalhos */
+      .atalho-texto { width: 90px; } /* Força a mesma largura da palavra "Vídeos" */
+      .atalho-icone { padding: 0 15px; width: auto; } /* Encolhe para abraçar o ícone */
+      .atalho-icone img { height: 22px; width: auto; object-fit: contain; }
 
       /* Estrutura das Mídias Expansíveis */
       .media-card .scroll-wrapper { display: none; position: relative; width: 100%; margin-top: 15px; }
@@ -84,13 +90,13 @@
       .expand-header::after { content: "(clique para expandir)"; }
       .media-card.open .expand-header::after { content: "(clique para ocultar)"; }
 
-      /* Miniaturas (Aparecem quando fechado e são clicáveis) */
+      /* Miniaturas */
       .media-thumbnails {
         display: flex; gap: 10px; justify-content: center; padding-top: 10px; overflow: hidden; cursor: pointer;
       }
       .media-card.open .media-thumbnails { display: none; }
       .media-thumbnail-img {
-        height: 52px; width: auto; max-width: 80px; /* 1.5x o tamanho dos ícones de contato */
+        height: 52px; width: auto; max-width: 80px;
         object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
 
@@ -151,7 +157,7 @@
 
       /* --- MODAIS & POPUPS --- */
       
-      /* Lightbox de Imagens (70% Preto e Suporte a Pinça) */
+      /* Lightbox de Imagens */
       .lightbox {
         display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background-color: rgba(0,0,0,0.7); z-index: 3000;
@@ -159,7 +165,7 @@
       }
       .lightbox img {
         max-width: 100vw; max-height: 100vh; object-fit: contain;
-        touch-action: pan-x pan-y pinch-zoom; /* Permite Zoom nativo no celular */
+        touch-action: pan-x pan-y pinch-zoom;
       }
       .lb-arrow {
         position: absolute; top: 50%; transform: translateY(-50%);
@@ -187,6 +193,15 @@
         border: none; border-radius: 8px; cursor: pointer; transition: 0.3s;
       }
       .popup button:hover { background-color: #8495a3; }
+
+      /* Botão Flutuante TOPO */
+      #btnTopo {
+        display: none; position: fixed; bottom: 20px; right: 20px; z-index: 999;
+        background-color: #6c7c89; color: white; border: 2px solid #2F3D48;
+        padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background-color 0.3s, transform 0.3s;
+      }
+      #btnTopo:hover { background-color: #8495a3; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -197,12 +212,12 @@
 
   <section class="card atalhos" style="background: transparent; box-shadow: none; padding: 0;">
     <ul class="atalhos-lista">
-      <li onclick="scrollToSection('sobre')">Descrição</li>
-      <li onclick="scrollToSection('sobre-mim')">Sobre Mim</li>
-      <li onclick="scrollToSection('fotos')">Fotos</li>
-      <li onclick="scrollToSection('videos')">Vídeos</li>
-      <li onclick="scrollToSection('jogos')">Jogos</li>
-      <li onclick="scrollToSection('contato')">Contato</li>
+      <li class="atalho-icone" onclick="scrollToSection('contato')">
+        <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
+      </li>
+      <li class="atalho-texto" onclick="scrollToSection('fotos')">Fotos</li>
+      <li class="atalho-texto" onclick="scrollToSection('videos')">Vídeos</li>
+      <li class="atalho-texto" onclick="scrollToSection('jogos')">Jogos</li>
     </ul>
   </section>
 
@@ -216,19 +231,17 @@
     Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
   </section>
 
-  <!-- FOTOS -->
   <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos')">Fotos</div>
   <section class="card media-card" id="card-fotos">
     <div class="expand-header" onclick="toggleCard('card-fotos')"></div>
-    <div class="media-thumbnails" id="fotos-thumbs" onclick="toggleCard('card-fotos')"></div> <!-- Geradas automaticamente -->
+    <div class="media-thumbnails" id="fotos-thumbs" onclick="toggleCard('card-fotos')"></div>
     <div class="scroll-wrapper">
       <button class="scroll-arrow left" onclick="scrollMedia(this, -1)">❮</button>
-      <div class="media-content scroll-container" id="fotos-scroll"></div> <!-- Geradas automaticamente -->
+      <div class="media-content scroll-container" id="fotos-scroll"></div>
       <button class="scroll-arrow right" onclick="scrollMedia(this, 1)">❯</button>
     </div>
   </section>
 
-  <!-- VÍDEOS -->
   <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos')">Vídeos</div>
   <section class="card media-card" id="card-videos">
     <div class="expand-header" onclick="toggleCard('card-videos')"></div>
@@ -250,7 +263,6 @@
     </div>
   </section>
 
-  <!-- JOGOS -->
   <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos')">Jogos</div>
   <section class="card media-card" id="card-jogos">
     <div class="expand-header" onclick="toggleCard('card-jogos')"></div>
@@ -280,10 +292,10 @@
     </div>
   </section>
 
-  <!-- Janela Popup de Contato -->
+  <button id="btnTopo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Topo</button>
+
   <div class="popup" id="popup"></div>
 
-  <!-- Galeria de Fotos Modal (Lightbox) -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <button class="lb-close" onclick="closeLightbox(event)">✖</button>
     <button class="lb-arrow left" id="lb-prev" onclick="navLightbox(-1, event)">❮</button>
@@ -298,11 +310,8 @@
     function toggleCard(cardId) {
       const card = document.getElementById(cardId);
       if (!card) return;
-      
-      // Alterna o estado de aberto/fechado
       card.classList.toggle('open');
       
-      // Se for uma caixa de mídia (fotos, vídeos, jogos) e estiver abrindo, checa as setas
       if (card.classList.contains('open') && card.classList.contains('media-card')) {
         const wrapper = card.querySelector('.scroll-wrapper');
         setTimeout(() => checkArrows(wrapper), 50);
@@ -315,7 +324,6 @@
     let fotosGaleria = [];
 
     async function carregarFotosDoGithub() {
-      // Endpoint da API do GitHub para ler o conteúdo da pasta de imagens
       const apiURL = "https://api.github.com/repos/espaco-digital/espaco-digital.github.io/contents/espacodigital/imagens";
       
       try {
@@ -324,11 +332,10 @@
         
         const data = await response.json();
         
-        // Filtra para pegar apenas arquivos de imagem
-        let arquivos = data.filter(file => file.name.match(/\.(jpe?g|png|gif|webp)$/i));
+        // NOVO: Exige que a imagem comece com número (\d+) para ser aceita!
+        let arquivos = data.filter(file => file.name.match(/\.(jpe?g|png|gif|webp)$/i) && file.name.match(/^\d+/));
         
-        // ORDENAÇÃO INTELIGENTE (Magia Acontecendo Aqui):
-        // Vai pegar o número no começo do arquivo. Se não tiver número, vale 0 (fica em primeiro)
+        // Ordena com base no número inicial
         arquivos.sort((a, b) => {
           const extrairNumero = (nomeArquivo) => {
             const match = nomeArquivo.match(/^(\d+)/);
@@ -337,17 +344,10 @@
           return extrairNumero(a.name) - extrairNumero(b.name);
         });
         
-        // Mapeia os arquivos para a URL oficial de download da imagem
         fotosGaleria = arquivos.map(file => file.download_url);
         
       } catch (error) {
-        console.error("Não foi possível carregar do GitHub, usando imagens de backup.", error);
-        // Backup caso a API do GitHub saia do ar momentaneamente
-        fotosGaleria = [
-          "https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20180901-WA0001_kindlephoto-757824164.jpg",
-          "https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20190723-WA0003.jpg",
-          "https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20190723-WA0004.jpg"
-        ];
+        console.error("Não foi possível carregar do GitHub, lista vazia.", error);
       }
       
       renderizarFotos();
@@ -359,17 +359,13 @@
       
       thumbsContainer.innerHTML = '';
       scrollContainer.innerHTML = '';
-      
-      // Removemos a capa do jogo 'ZBDisplay.png' da sessão de fotos automaticamente
-      const fotosReais = fotosGaleria.filter(url => !url.includes('ZBDisplay.png'));
 
-      if (fotosReais.length === 0) {
-        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0;">Nenhuma foto na pasta.</p>';
+      if (fotosGaleria.length === 0) {
+        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0;">Nenhuma foto numerada encontrada.</p>';
         return;
       }
 
-      fotosReais.forEach((foto, index) => {
-        // Criando as miniaturas da caixa fechada (mostra no máx as 4 primeiras fotos)
+      fotosGaleria.forEach((foto, index) => {
         if (index < 4) {
           const thumb = document.createElement('img');
           thumb.src = foto;
@@ -377,7 +373,6 @@
           thumbsContainer.appendChild(thumb);
         }
 
-        // Criando a imagem grande para quando a caixa abrir
         const wrapper = document.createElement('div');
         wrapper.className = 'image-wrapper';
         wrapper.onclick = () => openLightbox(index);
@@ -387,12 +382,8 @@
         wrapper.appendChild(img);
         scrollContainer.appendChild(wrapper);
       });
-      
-      // Sincroniza a galeria do Lightbox (tela preta) com a lista limpa sem o jogo
-      fotosGaleria = fotosReais;
     }
 
-    // Inicia o carregamento das fotos assim que o site abre
     carregarFotosDoGithub();
 
     // ==========================================
@@ -408,14 +399,12 @@
 
     function atualizarLightbox() {
       document.getElementById('lightbox-img').src = fotosGaleria[currentPhotoIndex];
-      // Mostra a seta esquerda só se não for a primeira foto
       document.getElementById('lb-prev').style.display = currentPhotoIndex > 0 ? 'flex' : 'none';
-      // Mostra a seta direita só se não for a última foto
       document.getElementById('lb-next').style.display = currentPhotoIndex < fotosGaleria.length - 1 ? 'flex' : 'none';
     }
 
     function navLightbox(direcao, event) {
-      event.stopPropagation(); // Evita que o clique na seta feche o Lightbox
+      event.stopPropagation();
       currentPhotoIndex += direcao;
       atualizarLightbox();
     }
@@ -430,7 +419,6 @@
     // ==========================================
     function scrollMedia(btn, direcao) {
       const container = btn.parentElement.querySelector('.scroll-container');
-      // Rola 300px horizontalmente para o lado clicado
       container.scrollBy({ left: direcao * 300, behavior: 'smooth' });
     }
 
@@ -441,17 +429,25 @@
       
       if (!container || !leftArrow || !rightArrow) return;
 
-      // Seta esquerda só aparece se tiver sido rolado mais que 5 pixels
       leftArrow.style.display = container.scrollLeft > 5 ? 'flex' : 'none';
-      
-      // Seta direita some quando atinge o final da rolagem
       const maxScroll = container.scrollWidth - container.clientWidth;
       rightArrow.style.display = Math.ceil(container.scrollLeft) >= maxScroll - 5 ? 'none' : 'flex';
     }
 
-    // Fica monitorando a rolagem com o dedo/mouse para ligar e desligar as setas
     document.querySelectorAll('.scroll-container').forEach(container => {
       container.addEventListener('scroll', () => checkArrows(container.parentElement));
+    });
+
+    // ==========================================
+    // LÓGICA DO BOTÃO TOPO (FLUTUANTE)
+    // ==========================================
+    window.addEventListener('scroll', () => {
+      const btnTopo = document.getElementById('btnTopo');
+      if (window.scrollY > window.innerHeight / 3) {
+        btnTopo.style.display = 'block';
+      } else {
+        btnTopo.style.display = 'none';
+      }
     });
 
     // ==========================================
@@ -501,7 +497,7 @@
     });
     document.addEventListener('mouseup', () => isDragging = false);
     
-    // Fechar popup de contato clicando fora
+    // Fechar popup clicando fora
     document.addEventListener('click', e => {
       if (popupEl && popupEl.style.display === 'block' && !popupEl.contains(e.target) && !e.target.closest('.icone')) {
         fecharPopup();
