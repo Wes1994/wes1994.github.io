@@ -44,7 +44,11 @@
         background-color: #34444f; border-radius: 20px; color: #cfdde9;
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         cursor: pointer; 
+        transition: background-color 0.3s ease; /* Transição para o efeito hover */
       }
+      
+      /* Efeito Hover nas Caixas */
+      .card.hover-effect:hover { background-color: #3b4d5a; }
       .card.open { cursor: default; }
 
       /* Texto expansível simples (Descrição e Sobre Mim) */
@@ -86,21 +90,27 @@
       .media-card .scroll-wrapper { display: none; position: relative; width: 100%; margin-top: 15px; }
       .media-card.open .scroll-wrapper { display: block; }
       
-      /* Títulos de Grupos (Casuais, Dança, etc) e Setas Simétricas */
+      /* Títulos de Grupos (Casuais, Dança, etc) */
       .group-header-container {
-        display: flex; justify-content: center; align-items: center; gap: 15px;
-        margin-top: -10px; /* Reduz pela metade o espaçamento em relação ao topo da caixa */
-        margin-bottom: 5px;
+        display: flex; justify-content: center; align-items: center;
+        margin-top: -10px; margin-bottom: 5px;
+        min-height: 24px; width: 100%;
       }
       .expand-header {
         text-align: center; color: #a0aec0; font-size: 0.85rem; font-weight: 400; padding: 0; margin: 0;
       }
+      
+      /* Setas Grandes Simétricas nas Laterais */
       .group-arrow {
-        font-size: 1.2rem; font-weight: 600; color: #6c7c89; cursor: pointer; user-select: none;
+        position: absolute; top: 50%; transform: translateY(-50%);
+        font-size: 3rem; font-weight: 300; color: #6c7c89; cursor: pointer; user-select: none;
         transition: color 0.3s, transform 0.2s, opacity 0.3s;
+        z-index: 10;
       }
-      .group-arrow:hover:not(.disabled) { color: #cfdde9; transform: scale(1.1); }
-      .group-arrow.disabled { opacity: 0.2; pointer-events: none; } /* Deixa a seta transparente mas mantem a simetria perfeita */
+      .group-arrow:hover:not(.disabled) { color: #cfdde9; transform: translateY(-50%) scale(1.1); }
+      .group-arrow.disabled { opacity: 0; pointer-events: none; } /* Oculta suavemente */
+      .group-arrow.left { left: -10px; }
+      .group-arrow.right { right: -10px; }
 
       /* Miniaturas e Overlay Flutuante */
       .media-thumbnails-container {
@@ -115,6 +125,7 @@
         color: #a0aec0; padding: 4px 14px; border-radius: 12px;
         font-size: 0.85rem; z-index: 5; border: 1px solid rgba(74, 94, 108, 0.6);
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        white-space: nowrap; /* Mantém em 1 linha no celular */
         pointer-events: none; /* Permite clicar através dele */
       }
       
@@ -138,7 +149,7 @@
       .scroll-arrow:hover:not(.disabled) { background-color: #8495a3; }
       .scroll-arrow.left { left: -10px; }
       .scroll-arrow.right { right: -10px; }
-      .scroll-arrow.disabled { opacity: 0; pointer-events: none; } /* Oculta suavemente ao chegar nos limites */
+      .scroll-arrow.disabled { opacity: 0; pointer-events: none; }
 
       /* Scroll Horizontal Interno */
       .scroll-container {
@@ -249,23 +260,24 @@
   </section>
 
   <div class="section-title" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
-  <section class="card expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
+  <section class="card hover-effect expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
     Página pessoal, mas também profissional. Dedicada a demonstrar projetos em andamento, portifólios criativos/profissionais, eventuais depoimentos, dentre outras coisas.
   </section>
 
   <div class="section-title" id="sobre-mim" title="Clique para expandir" onclick="toggleCard('card-sobre-mim', event)">Sobre Mim</div>
-  <section class="card expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
+  <section class="card hover-effect expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
     Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
   </section>
 
   <!-- FOTOS -->
   <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
-  <section class="card media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
+  <section class="card hover-effect media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
     <div class="media-card-top">
+      <div class="group-arrow left disabled" onclick="mudarGrupo('fotos', -1, event)">❮</div>
+      <div class="group-arrow right disabled" onclick="mudarGrupo('fotos', 1, event)">❯</div>
+      
       <div class="group-header-container">
-        <div class="group-arrow left disabled" onclick="mudarGrupo('fotos', -1, event)">❮</div>
         <div class="expand-header" id="header-fotos">Casuais</div>
-        <div class="group-arrow right disabled" onclick="mudarGrupo('fotos', 1, event)">❯</div>
       </div>
       
       <div class="media-thumbnails-container">
@@ -283,12 +295,13 @@
 
   <!-- VÍDEOS -->
   <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
-  <section class="card media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
+  <section class="card hover-effect media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
     <div class="media-card-top">
+      <div class="group-arrow left disabled" onclick="mudarGrupo('videos', -1, event)">❮</div>
+      <div class="group-arrow right disabled" onclick="mudarGrupo('videos', 1, event)">❯</div>
+      
       <div class="group-header-container">
-        <div class="group-arrow left disabled" onclick="mudarGrupo('videos', -1, event)">❮</div>
         <div class="expand-header" id="header-videos">Dança</div>
-        <div class="group-arrow right disabled" onclick="mudarGrupo('videos', 1, event)">❯</div>
       </div>
       
       <div class="media-thumbnails-container">
@@ -304,9 +317,9 @@
     </div>
   </section>
 
-  <!-- JOGOS (SEM GRUPOS) -->
+  <!-- JOGOS -->
   <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
-  <section class="card media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
+  <section class="card hover-effect media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
     <div class="media-card-top">
       <div class="media-thumbnails-container">
         <div class="overlay-text">(clique para expandir)</div>
