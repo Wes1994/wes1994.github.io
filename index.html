@@ -30,23 +30,23 @@
       @keyframes pulse { to { transform: scale(1.025); } }
 
       .section-title {
-        font-size: 1.5rem; /* Tamanho levemente reduzido */
+        font-size: 1.5rem; 
         font-weight: 600; color: #a0aec0;
         margin: 30px auto 10px; text-align: center; transition: text-shadow 0.3s;
       }
       .section-title:hover { text-shadow: 0 0 10px #a0aec0; }
 
-      /* Classe utilitária para os blocos */
       .card {
-        max-width: 800px; margin: 10px auto 30px; padding: 20px;
+        width: 100%; max-width: 800px; box-sizing: border-box; 
+        margin: 10px auto 30px; padding: 20px;
         background-color: #34444f; border-radius: 20px; color: #cfdde9;
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       }
 
-      /* Texto expansível */
+      /* Texto expansível simples (Descrição e Sobre Mim) */
       .expandable {
         cursor: pointer; display: -webkit-box; -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1; /* Mostra só 1 linha por padrão */
+        -webkit-line-clamp: 1; 
         overflow: hidden; transition: all 0.3s ease; position: relative;
       }
       .expandable.open { -webkit-line-clamp: unset; }
@@ -55,36 +55,61 @@
       }
       .expandable.open::after { content: ""; }
 
-      /* Atalhos */
+      /* Atalhos (Agora com Scroll Horizontal) */
       .atalhos-lista {
-        list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+        list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
+        justify-content: flex-start; /* Para o scroll funcionar melhor */
+        overflow-x: auto; flex-wrap: nowrap; padding-bottom: 10px;
       }
       .atalhos-lista li {
+        flex: 0 0 auto; /* Impede os botões de esmagarem */
         background-color: #4a5e6c; padding: 10px 15px; border-radius: 12px; cursor: pointer;
         transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }
       .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
+      .atalhos-lista::-webkit-scrollbar { height: 6px; }
+      .atalhos-lista::-webkit-scrollbar-track { background: transparent; }
+      .atalhos-lista::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
 
-      /* Ícones Contato */
-      .icones { 
-        display: flex; 
-        gap: 7.5px; /* Espaço reduzido pela metade */
-        flex-wrap: wrap; 
-        justify-content: center; 
-        margin-top: 10px; 
+      /* Mídias Expansíveis (Imagens e Vídeos) */
+      .media-card .media-content {
+        display: none; 
       }
-      .icone {
-        width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: transform 0.3s;
+      .media-card.open .media-content {
+        display: flex; margin-top: 15px;
       }
-      .icone:hover { transform: scale(1.2); }
-      .icone img { width: 35px; height: 35px; object-fit: contain; }
+      .expand-header {
+        text-align: center; cursor: pointer; color: #a0aec0; font-size: 0.85em; padding: 5px;
+      }
+      .expand-header::after { content: "(clique para expandir)"; }
+      .media-card.open .expand-header::after { content: "(clique para ocultar)"; }
+
+      /* Scroll Horizontal para Imagens e Vídeos */
+      .scroll-container {
+        flex-direction: row; gap: 20px; overflow-x: auto; padding-bottom: 10px; width: 100%;
+      }
+      .scroll-container::-webkit-scrollbar { height: 8px; }
+      .scroll-container::-webkit-scrollbar-track { background: #2F3D48; border-radius: 10px; }
+      .scroll-container::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
+
+      /* Design Padrão para Vídeos Shorts */
+      .video-wrapper {
+        position: relative; 
+        flex: 0 0 auto;
+        width: 80vw; max-width: 280px; /* Tamanho responsivo de Short */
+        aspect-ratio: 9 / 16; /* Força proporção vertical */
+        border-radius: 12px; overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3); background-color: #2F3D48;
+      }
+      .video-wrapper iframe {
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%; border: none;
+      }
 
       /* Jogos */
       .card-jogo {
         display: flex; align-items: center; justify-content: center;
-        height: 65px; /* Tamanho simulando as janelas de texto fechadas */
-        padding: 10px; box-sizing: border-box;
+        height: 65px; padding: 10px;
       }
       .jogo-banner {
         display: block; width: 100%; height: 100%; 
@@ -94,10 +119,17 @@
       .jogo-banner:hover { transform: scale(1.03); }
       .jogo-banner img { 
         width: 100%; height: 100%; 
-        object-fit: contain; /* Preserva o aspect ratio */
-        object-position: center; /* Centraliza a imagem */
-        display: block; 
+        object-fit: contain; object-position: center; display: block; 
       }
+
+      /* Ícones Contato */
+      .icones { display: flex; gap: 7.5px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+      .icone {
+        width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: transform 0.3s;
+      }
+      .icone:hover { transform: scale(1.2); }
+      .icone img { width: 35px; height: 35px; object-fit: contain; }
 
       /* Popup */
       .popup {
@@ -177,6 +209,8 @@
     <ul class="atalhos-lista">
       <li onclick="scrollToSection('sobre')">Descrição</li>
       <li onclick="scrollToSection('sobre-mim')">Sobre Mim</li>
+      <li onclick="scrollToSection('imagens')">Minhas Imagens</li>
+      <li onclick="scrollToSection('videos')">Meus Vídeos</li>
       <li onclick="scrollToSection('jogos')">Meus Jogos</li>
       <li onclick="scrollToSection('contato')">Contato</li>
     </ul>
@@ -190,6 +224,27 @@
   <div class="section-title" id="sobre-mim">Sobre Mim</div>
   <section class="card expandable" onclick="this.classList.toggle('open')">
     Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
+  </section>
+
+  <div class="section-title" id="imagens">Minhas Imagens</div>
+  <section class="card media-card">
+    <div class="expand-header" onclick="this.parentElement.classList.toggle('open')"></div>
+    <div class="media-content scroll-container">
+      <p style="text-align: center; width: 100%; color: #a0aec0; margin: 0;">Nenhuma imagem adicionada ainda.</p>
+    </div>
+  </section>
+
+  <div class="section-title" id="videos">Meus Vídeos</div>
+  <section class="card media-card">
+    <div class="expand-header" onclick="this.parentElement.classList.toggle('open')"></div>
+    <div class="media-content scroll-container">
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/mw86Wn5zDzM" title="Wesley Faria e Raíssa Lima (21/08/2025)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/ncMmDCHRHpU?list=PLKSqn6FS96c4tnNflow3HXgLTaTHUyjKI" title="Wesley Faria &amp; Prof. Dani Quisbert (28/08/2025)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </div>
   </section>
 
   <div class="section-title" id="jogos">Meus Jogos</div>
