@@ -41,14 +41,10 @@
       .card {
         width: 100%; max-width: 800px; box-sizing: border-box; 
         margin: 10px auto 30px; padding: 20px;
-        background-color: #34444f; border-radius: 20px; color: #cfdde9;
+        background-color: #4a5e6c; border-radius: 20px; color: #cfdde9;
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         cursor: pointer; 
-        transition: background-color 0.3s ease; /* Transição para o efeito hover */
       }
-      
-      /* Efeito Hover nas Caixas */
-      .card.hover-effect:hover { background-color: #3b4d5a; }
       .card.open { cursor: default; }
 
       /* Texto expansível simples (Descrição e Sobre Mim) */
@@ -107,8 +103,7 @@
         transition: color 0.3s, transform 0.2s, opacity 0.3s;
         z-index: 10;
       }
-      .group-arrow:hover:not(.disabled) { color: #cfdde9; transform: translateY(-50%) scale(1.1); }
-      .group-arrow.disabled { opacity: 0; pointer-events: none; } /* Oculta suavemente */
+      .group-arrow:hover { color: #cfdde9; transform: translateY(-50%) scale(1.1); }
       .group-arrow.left { left: -10px; }
       .group-arrow.right { right: -10px; }
 
@@ -116,15 +111,15 @@
       .media-thumbnails-container {
         position: relative; display: flex; align-items: center; justify-content: center;
         width: 100%;
+        min-height: 52px; /* Garante que a altura não diminua quando não houver miniaturas */
       }
       .media-card.open .media-thumbnails-container { display: none; }
       
       .overlay-text {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        background-color: rgba(52, 68, 79, 0.6); /* Cor #34444f com 60% de opacidade */
-        color: #a0aec0; padding: 4px 14px; border-radius: 12px;
-        font-size: 0.85rem; z-index: 5; border: 1px solid rgba(74, 94, 108, 0.6);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        color: #cfdde9;
+        font-size: 0.9rem; font-weight: 600; z-index: 5;
+        text-shadow: 0px 1px 4px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,1); /* Sombreamento para leitura em fundos claros */
         white-space: nowrap; /* Mantém em 1 linha no celular */
         pointer-events: none; /* Permite clicar através dele */
       }
@@ -222,7 +217,7 @@
       /* Popup Contato */
       .popup {
         display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        background-color: #34444f; padding: 20px; border-radius: 12px; z-index: 2000;
+        background-color: #4a5e6c; padding: 20px; border-radius: 12px; z-index: 2000;
         box-shadow: 0 0 15px rgba(0,0,0,0.4); text-align: center; border: 1px solid #6c7c89;
       }
       .popup p { cursor: move; margin-top: 0; font-weight: bold; }
@@ -260,21 +255,21 @@
   </section>
 
   <div class="section-title" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
-  <section class="card hover-effect expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
+  <section class="card expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
     Página pessoal, mas também profissional. Dedicada a demonstrar projetos em andamento, portifólios criativos/profissionais, eventuais depoimentos, dentre outras coisas.
   </section>
 
   <div class="section-title" id="sobre-mim" title="Clique para expandir" onclick="toggleCard('card-sobre-mim', event)">Sobre Mim</div>
-  <section class="card hover-effect expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
+  <section class="card expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
     Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
   </section>
 
   <!-- FOTOS -->
   <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
-  <section class="card hover-effect media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
+  <section class="card media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
     <div class="media-card-top">
-      <div class="group-arrow left disabled" onclick="mudarGrupo('fotos', -1, event)">❮</div>
-      <div class="group-arrow right disabled" onclick="mudarGrupo('fotos', 1, event)">❯</div>
+      <div class="group-arrow left" onclick="mudarGrupo('fotos', -1, event)">❮</div>
+      <div class="group-arrow right" onclick="mudarGrupo('fotos', 1, event)">❯</div>
       
       <div class="group-header-container">
         <div class="expand-header" id="header-fotos">Casuais</div>
@@ -295,10 +290,10 @@
 
   <!-- VÍDEOS -->
   <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
-  <section class="card hover-effect media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
+  <section class="card media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
     <div class="media-card-top">
-      <div class="group-arrow left disabled" onclick="mudarGrupo('videos', -1, event)">❮</div>
-      <div class="group-arrow right disabled" onclick="mudarGrupo('videos', 1, event)">❯</div>
+      <div class="group-arrow left" onclick="mudarGrupo('videos', -1, event)">❮</div>
+      <div class="group-arrow right" onclick="mudarGrupo('videos', 1, event)">❯</div>
       
       <div class="group-header-container">
         <div class="expand-header" id="header-videos">Dança</div>
@@ -319,7 +314,7 @@
 
   <!-- JOGOS -->
   <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
-  <section class="card hover-effect media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
+  <section class="card media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
     <div class="media-card-top">
       <div class="media-thumbnails-container">
         <div class="overlay-text">(clique para expandir)</div>
@@ -417,28 +412,12 @@
       const s = state[section];
       s.currentGroup += direction;
       
-      if (s.currentGroup < 0) s.currentGroup = 0;
-      if (s.currentGroup >= s.groups.length) s.currentGroup = s.groups.length - 1;
+      // Lógica de Loop Infinito (vai e volta pelas páginas)
+      if (s.currentGroup < 0) s.currentGroup = s.groups.length - 1;
+      if (s.currentGroup >= s.groups.length) s.currentGroup = 0;
 
       if (section === 'fotos') renderizarFotos();
       if (section === 'videos') renderizarVideos();
-    }
-
-    function updateGroupArrows(section) {
-      const s = state[section];
-      const card = document.getElementById(`card-${section}`);
-      if (!card) return;
-
-      const leftArrow = card.querySelector('.group-arrow.left');
-      const rightArrow = card.querySelector('.group-arrow.right');
-      
-      if (leftArrow && rightArrow) {
-        if (s.currentGroup > 0) leftArrow.classList.remove('disabled');
-        else leftArrow.classList.add('disabled');
-        
-        if (s.currentGroup < s.groups.length - 1) rightArrow.classList.remove('disabled');
-        else rightArrow.classList.add('disabled');
-      }
     }
 
     // ==========================================
@@ -503,7 +482,6 @@
           scrollContainer.appendChild(wrapper);
         });
       }
-      updateGroupArrows('fotos');
       setTimeout(() => checkArrows(document.querySelector('#card-fotos .scroll-wrapper')), 50);
     }
 
@@ -529,7 +507,6 @@
           scrollContainer.appendChild(wrapper);
         });
       }
-      updateGroupArrows('videos');
       setTimeout(() => checkArrows(document.querySelector('#card-videos .scroll-wrapper')), 50);
     }
 
