@@ -323,6 +323,75 @@
             debug: { invuln: false, baseInvuln: false, infAmmo: false, infTime: false, infItems: false, infItemsMap: { repair: false, baseRepair: false, shield: false, laser: false } }
         };
 
+        // Gerenciador de Áudio da Tela Inicial e Jogo
+        const AUDIO = {
+            intro: new Audio('https://espaco-digital.github.io/zonadebatalha/%C3%81udios/ZB%20-%20Intro.MP3'),
+            bgm: new Audio('https://espaco-digital.github.io/zonadebatalha/%C3%81udios/ZB%20-%20CampodeBatalha.mp3'),
+            explosionSrc: 'https://espaco-digital.github.io/zonadebatalha/%C3%81udios/ZB%20-%20Explos%C3%A3o.MP3',
+            explosionPool: [],
+            poolIndex: 0,
+
+            init() {
+                this.intro.loop = true;
+                this.intro.volume = 0.5;
+                this.bgm.loop = true;
+                this.bgm.volume = 0.4;
+                
+                // Audio Pool: Pré-carrega 10 instâncias do áudio de explosão
+                for (let i = 0; i < 10; i++) {
+                    const aud = new Audio(this.explosionSrc);
+                    aud.volume = 0.6;
+                    aud.preload = 'auto'; // Carrega suavemente na memória
+                    this.explosionPool.push(aud);
+                }
+
+                this.playIntro();
+
+                const unlockAudio = () => {
+                    if (STATE.status === 'startScreen' && this.intro.paused) {
+                        this.playIntro();
+                    }
+                    // Removido o loop que tocava as 10 explosões simultaneamente. 
+                    // Isso evita que a prévia (iframe) bloqueie o áudio por spam.
+                    document.removeEventListener('click', unlockAudio);
+                    document.removeEventListener('touchstart', unlockAudio);
+                };
+                document.addEventListener('click', unlockAudio);
+                document.addEventListener('touchstart', unlockAudio);
+            },
+            playIntro() {
+                if (STATE.status === 'startScreen') {
+                    this.intro.play().catch(e => console.log("Áudio bloqueado aguardando interação do usuário."));
+                }
+            },
+            stopIntro() {
+                this.intro.pause();
+                this.intro.currentTime = 0;
+            },
+            playBGM() {
+                this.bgm.currentTime = 0;
+                this.bgm.play().catch(e => console.log("BGM bloqueada", e));
+            },
+            stopBGM() {
+                this.bgm.pause();
+                this.bgm.currentTime = 0;
+            },
+            playExplosion() {
+                // Pega a próxima explosão da piscina para tocar instantaneamente
+                const exp = this.explosionPool[this.poolIndex];
+                exp.pause(); // Garante que zera o estado antes de tocar
+                exp.currentTime = 0;
+                
+                const playPromise = exp.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {}); // Captura erros silenciosamente na prévia
+                }
+                
+                // Avança o índice (0 a 9)
+                this.poolIndex = (this.poolIndex + 1) % this.explosionPool.length;
+            }
+        };
+
         const PLAYER = {
             life: 20, maxLife: 20, deaths: 0, ammo: 15, maxAmmo: 15, baseHp: 30, maxBaseHp: 30, gold: 0,
             inv: { repair: 0, baseRepair: 0, shield: 0, laser: 0 },
@@ -684,6 +753,7 @@
 
         const GAME = {
             startFresh() {
+                AUDIO.stopIntro();
                 STATE.phase = 1; PLAYER.gold = 0; PLAYER.deaths = 0; Object.keys(PLAYER.inv).forEach(k => PLAYER.inv[k]=0); PLAYER.currentItemIdx = -1;
                 Object.keys(PLAYER.firstTimeItem).forEach(k => PLAYER.firstTimeItem[k]=true); PLAYER.life = 20; PLAYER.maxLife = 20; PLAYER.baseHp = PLAYER.maxBaseHp; PLAYER.ammo = PLAYER.maxAmmo;
                 STATE.time = CONFIG.game.initialTime; STATE.stats.level = {shots:0, hits:0, dmgTaken:0, baseDmg:0, deaths:0, kills:0, time:0, score:0, gold:0}; STATE.stats.gen = {...STATE.stats.level};
@@ -691,6 +761,7 @@
             },
 
             startTestArena() {
+                AUDIO.stopIntro();
                 UI.showScreen('hud'); 
                 STATE.phase = 'test'; STATE.status = 'playing'; 
                 
@@ -728,6 +799,7 @@
 
                 UI.updateHUD(); UI.showScreen('hud'); UI.msg(`Arena de Testes!`, 3000);
                 this.startTimers();
+                AUDIO.playBGM();
             },
 
             spawnTestItem(pos, id, color) {
@@ -786,9 +858,16 @@
                 
                 UI.updateHUD(); UI.showScreen('hud'); UI.msg(`Sobreviva à ${STATE.phase >= CONFIG.game.totalPhases ? "última" : STATE.phase + "ª"} onda!`, 3000);
                 this.startTimers();
+                AUDIO.playBGM();
             },
 
-            quit() { UI.showScreen('start-screen'); },
+            quit() { 
+                STATE.status = 'startScreen'; 
+                UI.showScreen('start-screen'); 
+                AUDIO.stopBGM();
+                AUDIO.playIntro(); 
+            },
+            
             resume() { STATE.status = 'playing'; UI.showScreen('hud'); this.startTimers(); },
             stopTimers() { clearInterval(STATE.timers.play); clearInterval(STATE.timers.game); },
             startTimers() { 
@@ -950,13 +1029,18 @@
                 }
             },
 
-            takeDamage(amt) {
+            takeDamage(amt, source = 'unknown') {
                 if(STATE.debug.invuln) return;
                 PLAYER.life -= amt; STATE.stats.level.dmgTaken+=amt; STATE.stats.gen.dmgTaken+=amt; PLAYER.addScore(-10); UI.updateHUD();
                 ENGINE.flashEff(SCENE_OBJS.tankGrp, PLAYER.buffs.shield > 0 ? SCENE_OBJS.mats.shield : SCENE_OBJS.tank.userData.origMat);
                 if(PLAYER.life <= 0) {
                     PLAYER.deaths++; STATE.stats.level.deaths++; STATE.stats.gen.deaths++; PLAYER.addScore(-30); UI.updateHUD();
                     ENGINE.triggerExp(SCENE_OBJS.tank.position, 0xff4400, 50, 0.7, 1.2); STATE.timers.screenShake = 0.5; SCENE_OBJS.tank.visible = false;
+                    
+                    if (source !== 'projectile' && source !== 'reflected') {
+                        AUDIO.playExplosion();
+                    }
+
                     if(PLAYER.deaths >= CONFIG.game.maxDeaths) UI.showStats('gameOver', 'Game Over', 'Você perdeu todos os seus tanques!');
                     else { UI.msg("Tanque destruído!", 1500); setTimeout(()=>this.respawn(), 2000); }
                 }
@@ -978,7 +1062,7 @@
                 else if(STATE.lists.enemies.length < STATE.phaseData.maxSimul) setTimeout(()=>this.spawnEnemy(), CONFIG.enemy.respawnDelay);
             },
 
-            damageEnemy(e, amt) {
+            damageEnemy(e, amt, source = 'unknown') {
                 if(!e || !e.visible || e.userData.isTele) return; e.userData.life -= amt; ENGINE.flashEff(e.getObjectByName("model"), e.userData.origMat);
                 if((e.userData.isBoss || e.userData.isFinalBoss) && amt < 9999 && e.userData.life > 0) {
                     if(Math.random()<0.2) this.bossTeleport(e);
@@ -987,13 +1071,17 @@
                 if(e.userData.life <= 0) {
                     if (e.userData.type === 'kamikaze') {
                         ENGINE.triggerExp(e.position, 0xffaa00, 100, 1.5, 2.0); STATE.timers.screenShake = 0.8; UI.flash();
+                        AUDIO.playExplosion();
                         if (SCENE_OBJS.tank.visible && e.position.distanceTo(SCENE_OBJS.tank.position) < 12) {
                             if (PLAYER.buffs.shield > 0) { PLAYER.buffs.shield = 0; GAME.setShield(false); UI.msg("Escudo destruído!", 1500); }
-                            else { GAME.takeDamage(10); }
+                            else { GAME.takeDamage(10, 'kamikaze'); }
                         }
                         if (PLAYER.baseHp > 0 && e.position.distanceTo(SCENE_OBJS.base.position) < 12) GAME.damageBase(10);
                     } else {
                         ENGINE.triggerExp(e.position, 0xff4400, 40, 0.6, 1.0); STATE.timers.screenShake = 0.3; UI.flash(); 
+                        if (source !== 'projectile' && source !== 'reflected') {
+                            AUDIO.playExplosion();
+                        }
                     }
                     
                     if (STATE.phase !== 'test') {
@@ -1062,7 +1150,7 @@
             },
             dbgForceWin() {
                 if (STATE.phase === 'test') { alert("Não aplicável na Arena de Testes."); return; }
-                UI.toggleDebug(); STATE.phaseData.defeatedE = STATE.phaseData.totalE; STATE.lists.enemies.forEach(e => this.damageEnemy(e, 9999));
+                UI.toggleDebug(); STATE.phaseData.defeatedE = STATE.phaseData.totalE; STATE.lists.enemies.forEach(e => this.damageEnemy(e, 9999, 'debug'));
             },
             dbgSetPhase() {
                 const p = parseInt(document.getElementById('dbg-phase-sel').value);
@@ -1107,7 +1195,16 @@
             const tBB = new THREE.Box3().setFromObject(SCENE_OBJS.tankGrp);
             STATE.lists.obstacles.forEach(o => { if(o.isTree && tBB.intersectsBox(o.bb)) { tk.position.addScaledVector(new THREE.Vector3(0,0,-1).applyQuaternion(tk.quaternion), 0.35+Math.abs(PLAYER.speed*0.2)); PLAYER.speed*=-0.7; } });
             
-            if(!PLAYER.isInvuln) STATE.lists.mines = STATE.lists.mines.filter(m => { if(tk.position.distanceTo(m.mesh.position)<3) { ENGINE.triggerExp(m.mesh.position, 0xffaa00, 30, 0.5, 0.8); GAME.takeDamage(10); SCENE.remove(m.mesh); return false; } return true; });
+            if(!PLAYER.isInvuln) STATE.lists.mines = STATE.lists.mines.filter(m => { 
+                if(tk.position.distanceTo(m.mesh.position)<3) { 
+                    ENGINE.triggerExp(m.mesh.position, 0xffaa00, 30, 0.5, 0.8); 
+                    AUDIO.playExplosion();
+                    GAME.takeDamage(10, 'mine'); 
+                    SCENE.remove(m.mesh); 
+                    return false; 
+                } 
+                return true; 
+            });
             if(PLAYER.ammo===0 && tBB.intersectsBox(new THREE.Box3().setFromObject(SCENE_OBJS.base.userData.rColl))) { PLAYER.ammo=PLAYER.maxAmmo; UI.msg("Munição Recarregada!", 2000); UI.updateHUD(); }
 
             STATE.lists.enemies.forEach(e => {
@@ -1134,7 +1231,7 @@
 
                 if (isKami) {
                     if (dT < 10 || (PLAYER.baseHp > 0 && dB < 10)) {
-                        GAME.damageEnemy(e, 999); 
+                        GAME.damageEnemy(e, 999, 'kamikaze'); 
                         return; 
                     }
                 }
@@ -1195,10 +1292,16 @@
                                 let isP=false; SCENE_OBJS.tankGrp.traverse(c=>{if(c===hInt[0].object)isP=true;});
                                 if(isP && tk.visible && !PLAYER.isInvuln && !e.userData.lHPTA) { 
                                     e.userData.lHPTA=true; 
-                                    if(PLAYER.buffs.shield > 0 && !isFB) { PLAYER.buffs.shield = 0; GAME.setShield(false); UI.msg("Seu Escudo foi desativado!", 1500); } 
-                                    else if(!STATE.debug.invuln) { PLAYER.life -= (isFB ? 999 : 10); if(PLAYER.life<=0) GAME.takeDamage(999); UI.updateHUD(); }
+                                    if(PLAYER.buffs.shield > 0 && !isFB) { 
+                                        PLAYER.buffs.shield = 0; GAME.setShield(false); UI.msg("Seu Escudo foi desativado!", 1500); 
+                                    } 
+                                    else if(!STATE.debug.invuln) { 
+                                        GAME.takeDamage(isFB ? 999 : 10, 'laser');
+                                    }
                                 }
-                                else if(hInt[0].object===SCENE_OBJS.base.userData.dColl && !e.userData.lHBTA) { e.userData.lHBTA=true; GAME.damageBase(isFB ? 10 : 5); }
+                                else if(hInt[0].object===SCENE_OBJS.base.userData.dColl && !e.userData.lHBTA) { 
+                                    e.userData.lHBTA=true; GAME.damageBase(isFB ? 10 : 5); 
+                                }
                             }
                         } 
                         SCENE_OBJS.eLaser.scale.set(1,1,hitDist);
@@ -1229,10 +1332,46 @@
             [STATE.lists.proj, STATE.lists.enemyProj].forEach((list, isEIdx) => {
                 for(let i=list.length-1; i>=0; i--) {
                     const p = list[i], m = p.mesh; m.position.addScaledVector(m.userData.vel, dt); m.userData.life-=dt; p.bb.setFromObject(m); let d = m.userData.life<=0;
-                    if(!d && PLAYER.baseHp>0 && p.bb.intersectsBox(new THREE.Box3().setFromObject(SCENE_OBJS.base.userData.dColl))) { ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); GAME.damageBase(m.userData.dmg); d=true; }
-                    if(!d && !isEIdx) { const h = STATE.lists.enemies.find(e => e.visible && !e.userData.isTele && p.bb.intersectsBox(new THREE.Box3().setFromObject(e.getObjectByName("model")))); if(h) { ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); STATE.stats.level.hits++; STATE.stats.gen.hits++; PLAYER.addScore(15); if(h.userData.shieldT>0){GAME.takeDamage(m.userData.dmg);UI.msg("Dano Refletido!",500);} else GAME.damageEnemy(h, m.userData.dmg); d=true; } }
-                    if(!d && isEIdx && tk.visible && !PLAYER.isInvuln && p.bb.intersectsBox(new THREE.Box3().setFromObject(SCENE_OBJS.tankGrp))) { ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); if(PLAYER.buffs.shield>0){if(m.userData.shooter&&m.userData.shooter.visible){GAME.damageEnemy(m.userData.shooter, m.userData.dmg);UI.msg("Dano Refletido!",500);}} else GAME.takeDamage(m.userData.dmg); d=true; }
-                    if(!d && STATE.lists.obstacles.some(o => o.isTree && p.bb.intersectsBox(o.bb))) { ENGINE.triggerExp(m.position, 0x888888, 10, 0.3, 0.4); d=true; }
+                    
+                    if(!d && PLAYER.baseHp>0 && p.bb.intersectsBox(new THREE.Box3().setFromObject(SCENE_OBJS.base.userData.dColl))) { 
+                        ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); 
+                        GAME.damageBase(m.userData.dmg); 
+                        d=true; AUDIO.playExplosion(); 
+                    }
+                    
+                    if(!d && !isEIdx) { 
+                        const h = STATE.lists.enemies.find(e => e.visible && !e.userData.isTele && p.bb.intersectsBox(new THREE.Box3().setFromObject(e.getObjectByName("model")))); 
+                        if(h) { 
+                            ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); 
+                            STATE.stats.level.hits++; STATE.stats.gen.hits++; PLAYER.addScore(15); 
+                            if(h.userData.shieldT>0){
+                                GAME.takeDamage(m.userData.dmg, 'reflected'); 
+                                UI.msg("Dano Refletido!",500);
+                            } else {
+                                GAME.damageEnemy(h, m.userData.dmg, 'projectile'); 
+                            }
+                            d=true; AUDIO.playExplosion(); 
+                        } 
+                    }
+                    
+                    if(!d && isEIdx && tk.visible && !PLAYER.isInvuln && p.bb.intersectsBox(new THREE.Box3().setFromObject(SCENE_OBJS.tankGrp))) { 
+                        ENGINE.triggerExp(m.position, 0xffaa00, 15, 0.4, 0.6); 
+                        if(PLAYER.buffs.shield>0){
+                            if(m.userData.shooter&&m.userData.shooter.visible){
+                                GAME.damageEnemy(m.userData.shooter, m.userData.dmg, 'reflected');
+                                UI.msg("Dano Refletido!",500);
+                            }
+                        } else {
+                            GAME.takeDamage(m.userData.dmg, 'projectile'); 
+                        }
+                        d=true; AUDIO.playExplosion(); 
+                    }
+                    
+                    if(!d && STATE.lists.obstacles.some(o => o.isTree && p.bb.intersectsBox(o.bb))) { 
+                        ENGINE.triggerExp(m.position, 0x888888, 10, 0.3, 0.4); 
+                        d=true; AUDIO.playExplosion(); 
+                    }
+                    
                     if(d) { SCENE.remove(m); list.splice(i,1); }
                 }
             });
@@ -1266,7 +1405,7 @@
                         const e = STATE.lists.enemies.find(x=>{let p=false; x.traverse(c=>{if(c===h.object)p=true;}); return p;});
                         if(e){ 
                             if(e.userData.shieldT > 0) { e.userData.shieldT = 0; ENGINE.flashEff(e.getObjectByName("model"), e.userData.origMat); UI.msg("Escudo do Chefe Destruído!", 1500); } 
-                            else { ENGINE.flashEff(e.getObjectByName("model"), e.userData.origMat); if((e.userData.lHT=(e.userData.lHT||0)+dt)>=1){GAME.damageEnemy(e,5);e.userData.lHT=0;} }
+                            else { ENGINE.flashEff(e.getObjectByName("model"), e.userData.origMat); if((e.userData.lHT=(e.userData.lHT||0)+dt)>=1){GAME.damageEnemy(e,5,'laser');e.userData.lHT=0;} }
                         }
                     }
                 }
@@ -1289,7 +1428,7 @@
 
         function animate() { requestAnimationFrame(animate); const dt = CLOCK.getDelta(); if(STATE.status === 'playing') updateEntities(dt); if(RENDERER && SCENE && CAMERA) RENDERER.render(SCENE, CAMERA); }
 
-        UI.init(); INPUT.init(); UI.showScreen('start-screen');
+        UI.init(); INPUT.init(); UI.showScreen('start-screen'); AUDIO.init();
     </script>
 </body>
 </html>
