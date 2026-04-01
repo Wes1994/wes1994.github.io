@@ -92,6 +92,23 @@
       .scroll-container::-webkit-scrollbar-track { background: #2F3D48; border-radius: 10px; }
       .scroll-container::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
 
+      /* Design para Galeria de Imagens */
+      .image-wrapper {
+        flex: 0 0 auto;
+        height: 280px; /* Altura fixa para criar o carrossel */
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        background-color: #2F3D48;
+      }
+      .image-wrapper img {
+        height: 100%;
+        width: auto;
+        display: block;
+        object-fit: cover;
+        max-width: 85vw; /* Impede que a imagem ultrapasse a tela em celulares */
+      }
+
       /* Design Padrão para Vídeos Shorts */
       .video-wrapper {
         position: relative; 
@@ -230,7 +247,15 @@
   <section class="card media-card">
     <div class="expand-header" onclick="this.parentElement.classList.toggle('open')"></div>
     <div class="media-content scroll-container">
-      <p style="text-align: center; width: 100%; color: #a0aec0; margin: 0;">Nenhuma imagem adicionada ainda.</p>
+      <div class="image-wrapper">
+        <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20180901-WA0001_kindlephoto-757824164.jpg" alt="Galeria Imagem 1">
+      </div>
+      <div class="image-wrapper">
+        <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20190723-WA0003.jpg" alt="Galeria Imagem 2">
+      </div>
+      <div class="image-wrapper">
+        <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/IMG-20190723-WA0004.jpg" alt="Galeria Imagem 3">
+      </div>
     </div>
   </section>
 
