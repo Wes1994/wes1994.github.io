@@ -43,11 +43,13 @@
         margin: 10px auto 30px; padding: 20px;
         background-color: #34444f; border-radius: 20px; color: #cfdde9;
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        cursor: pointer; 
       }
+      .card.open { cursor: default; }
 
-      /* Texto expansível */
+      /* Texto expansível simples (Descrição e Sobre Mim) */
       .expandable {
-        cursor: pointer; display: -webkit-box; -webkit-box-orient: vertical;
+        display: -webkit-box; -webkit-box-orient: vertical;
         -webkit-line-clamp: 1; 
         overflow: hidden; transition: all 0.3s ease; position: relative;
       }
@@ -67,49 +69,76 @@
         flex: 0 0 auto; 
         background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
         transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        height: 42px; /* Altura padronizada */
+        height: 42px; 
         box-sizing: border-box; display: flex; align-items: center; justify-content: center;
       }
       .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
       .atalhos-lista::-webkit-scrollbar { height: 6px; }
       .atalhos-lista::-webkit-scrollbar-track { background: transparent; }
       .atalhos-lista::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
-
-      /* Ajustes específicos de largura dos atalhos */
-      .atalho-texto { width: 90px; } /* Força a mesma largura da palavra "Vídeos" */
-      .atalho-icone { padding: 0 15px; width: auto; } /* Encolhe para abraçar o ícone */
+      .atalho-texto { width: 90px; } 
+      .atalho-icone { padding: 0 15px; width: auto; } 
       .atalho-icone img { height: 22px; width: auto; object-fit: contain; }
 
       /* Estrutura das Mídias Expansíveis */
+      .media-card-top { position: relative; width: 100%; }
+      
       .media-card .scroll-wrapper { display: none; position: relative; width: 100%; margin-top: 15px; }
       .media-card.open .scroll-wrapper { display: block; }
       
+      /* Títulos de Grupos (Casuais, Dança, etc) e Setas Simétricas */
+      .group-header-container {
+        display: flex; justify-content: center; align-items: center; gap: 15px;
+        margin-top: -10px; /* Reduz pela metade o espaçamento em relação ao topo da caixa */
+        margin-bottom: 5px;
+      }
       .expand-header {
-        text-align: center; cursor: pointer; color: #a0aec0; font-size: 0.85em; padding: 5px;
+        text-align: center; color: #a0aec0; font-size: 0.85rem; font-weight: 400; padding: 0; margin: 0;
       }
-      .expand-header::after { content: "(clique para expandir)"; }
-      .media-card.open .expand-header::after { content: "(clique para ocultar)"; }
+      .group-arrow {
+        font-size: 1.2rem; font-weight: 600; color: #6c7c89; cursor: pointer; user-select: none;
+        transition: color 0.3s, transform 0.2s, opacity 0.3s;
+      }
+      .group-arrow:hover:not(.disabled) { color: #cfdde9; transform: scale(1.1); }
+      .group-arrow.disabled { opacity: 0.2; pointer-events: none; } /* Deixa a seta transparente mas mantem a simetria perfeita */
 
-      /* Miniaturas */
-      .media-thumbnails {
-        display: flex; gap: 10px; justify-content: center; padding-top: 10px; overflow: hidden; cursor: pointer;
+      /* Miniaturas e Overlay Flutuante */
+      .media-thumbnails-container {
+        position: relative; display: flex; align-items: center; justify-content: center;
+        width: 100%;
       }
-      .media-card.open .media-thumbnails { display: none; }
+      .media-card.open .media-thumbnails-container { display: none; }
+      
+      .overlay-text {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background-color: rgba(52, 68, 79, 0.6); /* Cor #34444f com 60% de opacidade */
+        color: #a0aec0; padding: 4px 14px; border-radius: 12px;
+        font-size: 0.85rem; z-index: 5; border: 1px solid rgba(74, 94, 108, 0.6);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        pointer-events: none; /* Permite clicar através dele */
+      }
+      
+      .media-thumbnails {
+        display: flex; gap: 10px; justify-content: center; overflow: hidden; width: 100%;
+        opacity: 0.8; /* Dá uma leve ofuscada pra dar destaque ao texto por cima */
+      }
       .media-thumbnail-img {
         height: 52px; width: auto; max-width: 80px;
         object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
 
-      /* Setas de Rolagem das Caixas */
+      /* Setas de Rolagem do Carrossel Interno */
       .scroll-arrow {
         position: absolute; top: 50%; transform: translateY(-50%);
         background-color: #6c7c89; color: white; border: 2px solid #2F3D48; border-radius: 50%;
         width: 35px; height: 35px; font-size: 1.2rem; cursor: pointer; z-index: 10;
-        display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        transition: opacity 0.3s, background-color 0.3s;
       }
-      .scroll-arrow:hover { background-color: #8495a3; }
+      .scroll-arrow:hover:not(.disabled) { background-color: #8495a3; }
       .scroll-arrow.left { left: -10px; }
       .scroll-arrow.right { right: -10px; }
+      .scroll-arrow.disabled { opacity: 0; pointer-events: none; } /* Oculta suavemente ao chegar nos limites */
 
       /* Scroll Horizontal Interno */
       .scroll-container {
@@ -155,8 +184,6 @@
       .icone:hover { transform: scale(1.2); }
       .icone img { width: 35px; height: 35px; object-fit: contain; }
 
-      /* --- MODAIS & POPUPS --- */
-      
       /* Lightbox de Imagens */
       .lightbox {
         display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -210,7 +237,7 @@
     <h1>Seja Bem Vindo!</h1>
   </section>
 
-  <section class="card atalhos" style="background: transparent; box-shadow: none; padding: 0;">
+  <section class="card atalhos" style="background: transparent; box-shadow: none; padding: 0; cursor: default;">
     <ul class="atalhos-lista">
       <li class="atalho-icone" onclick="scrollToSection('contato')">
         <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
@@ -221,67 +248,82 @@
     </ul>
   </section>
 
-  <div class="section-title" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre')">Descrição</div>
-  <section class="card expandable" id="card-sobre" onclick="toggleCard('card-sobre')">
+  <div class="section-title" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
+  <section class="card expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
     Página pessoal, mas também profissional. Dedicada a demonstrar projetos em andamento, portifólios criativos/profissionais, eventuais depoimentos, dentre outras coisas.
   </section>
 
-  <div class="section-title" id="sobre-mim" title="Clique para expandir" onclick="toggleCard('card-sobre-mim')">Sobre Mim</div>
-  <section class="card expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim')">
+  <div class="section-title" id="sobre-mim" title="Clique para expandir" onclick="toggleCard('card-sobre-mim', event)">Sobre Mim</div>
+  <section class="card expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
     Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
   </section>
 
-  <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos')">Fotos</div>
-  <section class="card media-card" id="card-fotos">
-    <div class="expand-header" onclick="toggleCard('card-fotos')"></div>
-    <div class="media-thumbnails" id="fotos-thumbs" onclick="toggleCard('card-fotos')"></div>
+  <!-- FOTOS -->
+  <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
+  <section class="card media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
+    <div class="media-card-top">
+      <div class="group-header-container">
+        <div class="group-arrow left disabled" onclick="mudarGrupo('fotos', -1, event)">❮</div>
+        <div class="expand-header" id="header-fotos">Casuais</div>
+        <div class="group-arrow right disabled" onclick="mudarGrupo('fotos', 1, event)">❯</div>
+      </div>
+      
+      <div class="media-thumbnails-container">
+        <div class="overlay-text">(clique para expandir)</div>
+        <div class="media-thumbnails" id="fotos-thumbs"></div>
+      </div>
+    </div>
+    
     <div class="scroll-wrapper">
-      <button class="scroll-arrow left" onclick="scrollMedia(this, -1)">❮</button>
+      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
       <div class="media-content scroll-container" id="fotos-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollMedia(this, 1)">❯</button>
+      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
     </div>
   </section>
 
-  <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos')">Vídeos</div>
-  <section class="card media-card" id="card-videos">
-    <div class="expand-header" onclick="toggleCard('card-videos')"></div>
-    <div class="media-thumbnails" onclick="toggleCard('card-videos')">
-      <img src="https://img.youtube.com/vi/mw86Wn5zDzM/hqdefault.jpg" class="media-thumbnail-img" alt="Video 1">
-      <img src="https://img.youtube.com/vi/ncMmDCHRHpU/hqdefault.jpg" class="media-thumbnail-img" alt="Video 2">
-    </div>
-    <div class="scroll-wrapper">
-      <button class="scroll-arrow left" onclick="scrollMedia(this, -1)">❮</button>
-      <div class="media-content scroll-container">
-        <div class="video-wrapper">
-          <iframe src="https://www.youtube.com/embed/mw86Wn5zDzM?vq=hd1080" allowfullscreen></iframe>
-        </div>
-        <div class="video-wrapper">
-          <iframe src="https://www.youtube.com/embed/ncMmDCHRHpU?list=PLKSqn6FS96c4tnNflow3HXgLTaTHUyjKI&vq=hd1080" allowfullscreen></iframe>
-        </div>
+  <!-- VÍDEOS -->
+  <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
+  <section class="card media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
+    <div class="media-card-top">
+      <div class="group-header-container">
+        <div class="group-arrow left disabled" onclick="mudarGrupo('videos', -1, event)">❮</div>
+        <div class="expand-header" id="header-videos">Dança</div>
+        <div class="group-arrow right disabled" onclick="mudarGrupo('videos', 1, event)">❯</div>
       </div>
-      <button class="scroll-arrow right" onclick="scrollMedia(this, 1)">❯</button>
-    </div>
-  </section>
-
-  <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos')">Jogos</div>
-  <section class="card media-card" id="card-jogos">
-    <div class="expand-header" onclick="toggleCard('card-jogos')"></div>
-    <div class="media-thumbnails" onclick="toggleCard('card-jogos')">
-      <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/ZBDisplay.png" class="media-thumbnail-img" alt="Zona de Batalha">
-    </div>
-    <div class="scroll-wrapper">
-      <button class="scroll-arrow left" onclick="scrollMedia(this, -1)">❮</button>
-      <div class="media-content scroll-container">
-        <a href="zonadebatalha/index.html" class="jogo-banner" title="Jogar Zona de Batalha">
-          <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/ZBDisplay.png" alt="Zona de Batalha">
-        </a>
+      
+      <div class="media-thumbnails-container">
+        <div class="overlay-text">(clique para expandir)</div>
+        <div class="media-thumbnails" id="videos-thumbs"></div>
       </div>
-      <button class="scroll-arrow right" onclick="scrollMedia(this, 1)">❯</button>
+    </div>
+    
+    <div class="scroll-wrapper">
+      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
+      <div class="media-content scroll-container" id="videos-scroll"></div>
+      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
     </div>
   </section>
 
+  <!-- JOGOS (SEM GRUPOS) -->
+  <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
+  <section class="card media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
+    <div class="media-card-top">
+      <div class="media-thumbnails-container">
+        <div class="overlay-text">(clique para expandir)</div>
+        <div class="media-thumbnails" id="jogos-thumbs"></div>
+      </div>
+    </div>
+    
+    <div class="scroll-wrapper">
+      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
+      <div class="media-content scroll-container" id="jogos-scroll"></div>
+      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
   <div class="section-title" id="contato">Contato</div>
-  <section class="card">
+  <section class="card" style="cursor: default;">
     <div class="icones">
       <div class="icone" onclick="mostrarPopup('whatsapp')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/whatsapp.png" alt="WhatsApp"></div>
       <div class="icone" onclick="mostrarPopup('email')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/gmail.png" alt="Gmail"></div>
@@ -305,9 +347,47 @@
 
   <script>
     // ==========================================
+    // SISTEMA DE DADOS DE GRUPOS E MÍDIAS
+    // ==========================================
+    const state = {
+      fotos: {
+        currentGroup: 0,
+        groups: [
+          { name: "Casuais", folder: "imagens", data: [] },
+          { name: "Portifólio", folder: "imagens2", data: [] }
+        ]
+      },
+      videos: {
+        currentGroup: 0,
+        groups: [
+          { name: "Dança", data: [
+            { src: "https://www.youtube.com/embed/mw86Wn5zDzM?vq=hd1080", thumb: "https://img.youtube.com/vi/mw86Wn5zDzM/hqdefault.jpg" },
+            { src: "https://www.youtube.com/embed/ncMmDCHRHpU?list=PLKSqn6FS96c4tnNflow3HXgLTaTHUyjKI&vq=hd1080", thumb: "https://img.youtube.com/vi/ncMmDCHRHpU/hqdefault.jpg" }
+          ]},
+          { name: "Portifólio", data: [] }
+        ]
+      },
+      jogos: [
+        { href: "zonadebatalha/index.html", title: "Jogar Zona de Batalha", thumb: "https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/ZBDisplay.png" }
+      ]
+    };
+
+    let fotosGaleriaAtual = []; // Guarda as fotos do grupo atual para o Lightbox
+
+    // ==========================================
     // LÓGICA DE EXPANDIR CAIXAS E ATALHOS
     // ==========================================
-    function toggleCard(cardId) {
+    function toggleCard(cardId, event) {
+      if (event && (
+        event.target.closest('.group-arrow') ||
+        event.target.closest('.scroll-arrow') ||
+        event.target.tagName.toLowerCase() === 'iframe' ||
+        event.target.tagName.toLowerCase() === 'a' ||
+        event.target.closest('.image-wrapper') 
+      )) {
+        return;
+      }
+
       const card = document.getElementById(cardId);
       if (!card) return;
       card.classList.toggle('open');
@@ -318,24 +398,48 @@
       }
     }
 
-    // ==========================================
-    // AUTOMAÇÃO DA PASTA DE FOTOS VIA GITHUB API
-    // ==========================================
-    let fotosGaleria = [];
-
-    async function carregarFotosDoGithub() {
-      const apiURL = "https://api.github.com/repos/espaco-digital/espaco-digital.github.io/contents/espacodigital/imagens";
+    function mudarGrupo(section, direction, event) {
+      if(event) event.stopPropagation(); 
       
+      const s = state[section];
+      s.currentGroup += direction;
+      
+      if (s.currentGroup < 0) s.currentGroup = 0;
+      if (s.currentGroup >= s.groups.length) s.currentGroup = s.groups.length - 1;
+
+      if (section === 'fotos') renderizarFotos();
+      if (section === 'videos') renderizarVideos();
+    }
+
+    function updateGroupArrows(section) {
+      const s = state[section];
+      const card = document.getElementById(`card-${section}`);
+      if (!card) return;
+
+      const leftArrow = card.querySelector('.group-arrow.left');
+      const rightArrow = card.querySelector('.group-arrow.right');
+      
+      if (leftArrow && rightArrow) {
+        if (s.currentGroup > 0) leftArrow.classList.remove('disabled');
+        else leftArrow.classList.add('disabled');
+        
+        if (s.currentGroup < s.groups.length - 1) rightArrow.classList.remove('disabled');
+        else rightArrow.classList.add('disabled');
+      }
+    }
+
+    // ==========================================
+    // AUTOMAÇÃO DO GITHUB (FOTOS)
+    // ==========================================
+    async function fetchGithubFolder(folderName) {
+      const apiURL = `https://api.github.com/repos/espaco-digital/espaco-digital.github.io/contents/espacodigital/${folderName}`;
       try {
         const response = await fetch(apiURL);
-        if (!response.ok) throw new Error("Erro na API do GitHub");
+        if (!response.ok) return [];
         
         const data = await response.json();
-        
-        // NOVO: Exige que a imagem comece com número (\d+) para ser aceita!
         let arquivos = data.filter(file => file.name.match(/\.(jpe?g|png|gif|webp)$/i) && file.name.match(/^\d+/));
         
-        // Ordena com base no número inicial
         arquivos.sort((a, b) => {
           const extrairNumero = (nomeArquivo) => {
             const match = nomeArquivo.match(/^(\d+)/);
@@ -343,48 +447,102 @@
           };
           return extrairNumero(a.name) - extrairNumero(b.name);
         });
-        
-        fotosGaleria = arquivos.map(file => file.download_url);
-        
+        return arquivos.map(file => file.download_url);
       } catch (error) {
-        console.error("Não foi possível carregar do GitHub, lista vazia.", error);
+        return [];
       }
+    }
+
+    async function inicializarDados() {
+      state.fotos.groups[0].data = await fetchGithubFolder('imagens');
+      state.fotos.groups[1].data = await fetchGithubFolder('imagens2');
       
       renderizarFotos();
+      renderizarVideos();
+      renderizarJogos();
     }
 
+    // ==========================================
+    // FUNÇÕES DE RENDERIZAÇÃO
+    // ==========================================
     function renderizarFotos() {
+      const group = state.fotos.groups[state.fotos.currentGroup];
+      document.getElementById('header-fotos').textContent = group.name;
+      
       const thumbsContainer = document.getElementById('fotos-thumbs');
       const scrollContainer = document.getElementById('fotos-scroll');
-      
-      thumbsContainer.innerHTML = '';
-      scrollContainer.innerHTML = '';
+      thumbsContainer.innerHTML = ''; scrollContainer.innerHTML = '';
 
-      if (fotosGaleria.length === 0) {
-        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0;">Nenhuma foto numerada encontrada.</p>';
-        return;
+      fotosGaleriaAtual = group.data; 
+
+      if (group.data.length === 0) {
+        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0; padding: 20px;">Em breve...</p>';
+      } else {
+        group.data.forEach((foto, index) => {
+          if (index < 4) {
+            const thumb = document.createElement('img'); thumb.src = foto; thumb.className = 'media-thumbnail-img';
+            thumbsContainer.appendChild(thumb);
+          }
+          const wrapper = document.createElement('div'); wrapper.className = 'image-wrapper';
+          wrapper.onclick = (e) => { e.stopPropagation(); openLightbox(index); };
+          const img = document.createElement('img'); img.src = foto;
+          wrapper.appendChild(img);
+          scrollContainer.appendChild(wrapper);
+        });
       }
-
-      fotosGaleria.forEach((foto, index) => {
-        if (index < 4) {
-          const thumb = document.createElement('img');
-          thumb.src = foto;
-          thumb.className = 'media-thumbnail-img';
-          thumbsContainer.appendChild(thumb);
-        }
-
-        const wrapper = document.createElement('div');
-        wrapper.className = 'image-wrapper';
-        wrapper.onclick = () => openLightbox(index);
-        
-        const img = document.createElement('img');
-        img.src = foto;
-        wrapper.appendChild(img);
-        scrollContainer.appendChild(wrapper);
-      });
+      updateGroupArrows('fotos');
+      setTimeout(() => checkArrows(document.querySelector('#card-fotos .scroll-wrapper')), 50);
     }
 
-    carregarFotosDoGithub();
+    function renderizarVideos() {
+      const group = state.videos.groups[state.videos.currentGroup];
+      document.getElementById('header-videos').textContent = group.name;
+
+      const thumbsContainer = document.getElementById('videos-thumbs');
+      const scrollContainer = document.getElementById('videos-scroll');
+      thumbsContainer.innerHTML = ''; scrollContainer.innerHTML = '';
+
+      if (group.data.length === 0) {
+        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0; padding: 20px;">Em breve...</p>';
+      } else {
+        group.data.forEach((v, index) => {
+          if (index < 4) {
+            const thumb = document.createElement('img'); thumb.src = v.thumb; thumb.className = 'media-thumbnail-img';
+            thumbsContainer.appendChild(thumb);
+          }
+          const wrapper = document.createElement('div'); wrapper.className = 'video-wrapper';
+          const iframe = document.createElement('iframe'); iframe.src = v.src; iframe.allowFullscreen = true;
+          wrapper.appendChild(iframe);
+          scrollContainer.appendChild(wrapper);
+        });
+      }
+      updateGroupArrows('videos');
+      setTimeout(() => checkArrows(document.querySelector('#card-videos .scroll-wrapper')), 50);
+    }
+
+    function renderizarJogos() {
+      const thumbsContainer = document.getElementById('jogos-thumbs');
+      const scrollContainer = document.getElementById('jogos-scroll');
+      thumbsContainer.innerHTML = ''; scrollContainer.innerHTML = '';
+
+      if (state.jogos.length === 0) {
+        scrollContainer.innerHTML = '<p style="text-align: center; width: 100%; color: #a0aec0; margin: 0; padding: 20px;">Em breve...</p>';
+      } else {
+        state.jogos.forEach((j, index) => {
+          if (index < 4) {
+            const thumb = document.createElement('img'); thumb.src = j.thumb; thumb.className = 'media-thumbnail-img';
+            thumbsContainer.appendChild(thumb);
+          }
+          const anchor = document.createElement('a'); anchor.href = j.href; anchor.className = 'jogo-banner'; anchor.title = j.title;
+          const img = document.createElement('img'); img.src = j.thumb;
+          anchor.appendChild(img);
+          scrollContainer.appendChild(anchor);
+        });
+      }
+      setTimeout(() => checkArrows(document.querySelector('#card-jogos .scroll-wrapper')), 50);
+    }
+
+    inicializarDados();
 
     // ==========================================
     // LÓGICA DE GALERIA LIGHTBOX (ZOOM TELA CHEIA)
@@ -398,9 +556,9 @@
     }
 
     function atualizarLightbox() {
-      document.getElementById('lightbox-img').src = fotosGaleria[currentPhotoIndex];
+      document.getElementById('lightbox-img').src = fotosGaleriaAtual[currentPhotoIndex];
       document.getElementById('lb-prev').style.display = currentPhotoIndex > 0 ? 'flex' : 'none';
-      document.getElementById('lb-next').style.display = currentPhotoIndex < fotosGaleria.length - 1 ? 'flex' : 'none';
+      document.getElementById('lb-next').style.display = currentPhotoIndex < fotosGaleriaAtual.length - 1 ? 'flex' : 'none';
     }
 
     function navLightbox(direcao, event) {
@@ -415,23 +573,28 @@
     }
 
     // ==========================================
-    // LÓGICA DE ROLAGEM E SETAS DINÂMICAS NAS CAIXAS
+    // LÓGICA DE ROLAGEM E SETAS DINÂMICAS (SCROLL HORIZONTAL)
     // ==========================================
-    function scrollMedia(btn, direcao) {
+    function scrollMedia(btn, direcao, event) {
+      if(event) event.stopPropagation();
       const container = btn.parentElement.querySelector('.scroll-container');
       container.scrollBy({ left: direcao * 300, behavior: 'smooth' });
     }
 
     function checkArrows(wrapper) {
+      if (!wrapper) return;
       const container = wrapper.querySelector('.scroll-container');
       const leftArrow = wrapper.querySelector('.scroll-arrow.left');
       const rightArrow = wrapper.querySelector('.scroll-arrow.right');
       
       if (!container || !leftArrow || !rightArrow) return;
 
-      leftArrow.style.display = container.scrollLeft > 5 ? 'flex' : 'none';
+      if (container.scrollLeft > 5) leftArrow.classList.remove('disabled');
+      else leftArrow.classList.add('disabled');
+      
       const maxScroll = container.scrollWidth - container.clientWidth;
-      rightArrow.style.display = Math.ceil(container.scrollLeft) >= maxScroll - 5 ? 'none' : 'flex';
+      if (Math.ceil(container.scrollLeft) >= maxScroll - 5) rightArrow.classList.add('disabled');
+      else rightArrow.classList.remove('disabled');
     }
 
     document.querySelectorAll('.scroll-container').forEach(container => {
