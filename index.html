@@ -31,54 +31,74 @@
 
       /* Títulos clicáveis */
       .section-title {
+        font-family: 'Playfair Display', serif;
         font-size: 1.5rem; 
         font-weight: 600; color: #a0aec0;
-        margin: 30px auto 10px; text-align: center; transition: text-shadow 0.3s;
+        margin: 15px auto 2px; text-align: center; 
+        transition: text-shadow 0.3s, opacity 0.4s ease;
         cursor: pointer;
       }
       .section-title:hover { text-shadow: 0 0 10px #a0aec0; color: #ffffff; }
 
       .card {
         width: 100%; max-width: 800px; box-sizing: border-box; 
-        margin: 10px auto 30px; padding: 20px;
+        margin: 8px auto 15px; padding: 20px;
         background-color: #4a5e6c; border-radius: 20px; color: #cfdde9;
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         cursor: pointer; 
+        transition: opacity 0.4s ease, box-shadow 0.3s, background-color 0.3s;
       }
       .card.open { cursor: default; }
 
-      /* Texto expansível simples (Descrição e Sobre Mim) */
+      /* Texto expansível simples (Descrição) */
       .expandable {
-        display: -webkit-box; -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1; 
-        overflow: hidden; transition: all 0.3s ease; position: relative;
+        transition: all 0.3s ease; position: relative;
       }
-      .expandable.open { -webkit-line-clamp: unset; }
+      .expandable .desc-hidden {
+        display: none;
+      }
+      .expandable.open .desc-hidden {
+        display: block;
+      }
       .expandable::after {
-        content: " (clique para expandir)"; font-size: 0.85em; color: #a0aec0;
+        content: "❯";
+        display: block; width: fit-content; margin: 5px auto -15px;
+        color: #a0aec0; font-size: 1.5rem; font-weight: 300;
+        transform: rotate(90deg); transition: color 0.3s;
       }
-      .expandable.open::after { content: ""; }
+      .expandable.open::after { content: ""; display: none; }
+      
+      /* Opacidade de Rolagem */
+      .fade-section { opacity: 0.4; }
+      .fade-section.in-focus { opacity: 1; }
+
+      /* Efeito de pulso de brilho */
+      @keyframes pulseGlow {
+        0% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
+        30% { box-shadow: 0 0 25px 8px rgba(207, 221, 233, 0.5); transform: scale(1.02); }
+        100% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
+      }
+      .glow-effect {
+        animation: pulseGlow 2s ease-out;
+      }
 
       /* Atalhos */
       .atalhos-lista {
         list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
-        justify-content: flex-start; 
-        overflow-x: auto; flex-wrap: nowrap; padding-bottom: 10px;
+        justify-content: center; 
+        flex-wrap: wrap; padding-bottom: 5px;
       }
       .atalhos-lista li {
         flex: 0 0 auto; 
         background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
         transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        height: 42px; 
+        height: 32px; 
         box-sizing: border-box; display: flex; align-items: center; justify-content: center;
       }
       .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
-      .atalhos-lista::-webkit-scrollbar { height: 6px; }
-      .atalhos-lista::-webkit-scrollbar-track { background: transparent; }
-      .atalhos-lista::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
-      .atalho-texto { width: 90px; } 
-      .atalho-icone { padding: 0 15px; width: auto; } 
-      .atalho-icone img { height: 22px; width: auto; object-fit: contain; }
+      .atalho-texto { width: 75px; font-size: 0.95rem; text-align: center; } 
+      .atalho-icone { width: 32px; padding: 0; } 
+      .atalho-icone img { height: 20px; width: auto; object-fit: contain; }
 
       /* Estrutura das Mídias Expansíveis */
       .media-card-top { position: relative; width: 100%; }
@@ -243,7 +263,7 @@
     <h1>Seja Bem Vindo!</h1>
   </section>
 
-  <section class="card atalhos" style="background: transparent; box-shadow: none; padding: 0; cursor: default;">
+  <section class="card atalhos fade-section" style="background: transparent; box-shadow: none; padding: 0; cursor: default;">
     <ul class="atalhos-lista">
       <li class="atalho-icone" onclick="scrollToSection('contato')">
         <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
@@ -254,19 +274,22 @@
     </ul>
   </section>
 
-  <div class="section-title" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
-  <section class="card expandable" id="card-sobre" onclick="toggleCard('card-sobre', event)">
-    Página pessoal, mas também profissional. Dedicada a demonstrar projetos em andamento, portifólios criativos/profissionais, eventuais depoimentos, dentre outras coisas.
-  </section>
-
-  <div class="section-title" id="sobre-mim" title="Clique para expandir" onclick="toggleCard('card-sobre-mim', event)">Sobre Mim</div>
-  <section class="card expandable" id="card-sobre-mim" onclick="toggleCard('card-sobre-mim', event)">
-    Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
+  <div class="section-title fade-section" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
+  <section class="card expandable fade-section" id="card-sobre" onclick="toggleCard('card-sobre', event)">
+    <div class="desc-main">
+      Página pessoal, mas também profissional. Feita para livre-expressão, exposição de fotos, vídeos, projetos e portifólios em andamento.
+    </div>
+    <div class="desc-hidden">
+      <div style="font-size: 1.1rem; font-weight: 600; color: #a0aec0; margin: 15px 0 5px;">Sobre Mim</div>
+      <div>
+        Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
+      </div>
+    </div>
   </section>
 
   <!-- FOTOS -->
-  <div class="section-title" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
-  <section class="card media-card" id="card-fotos" onclick="toggleCard('card-fotos', event)">
+  <div class="section-title fade-section" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
+  <section class="card media-card fade-section" id="card-fotos" onclick="toggleCard('card-fotos', event)">
     <div class="media-card-top">
       <div class="group-arrow left" onclick="mudarGrupo('fotos', -1, event)">❮</div>
       <div class="group-arrow right" onclick="mudarGrupo('fotos', 1, event)">❯</div>
@@ -289,8 +312,8 @@
   </section>
 
   <!-- VÍDEOS -->
-  <div class="section-title" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
-  <section class="card media-card" id="card-videos" onclick="toggleCard('card-videos', event)">
+  <div class="section-title fade-section" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
+  <section class="card media-card fade-section" id="card-videos" onclick="toggleCard('card-videos', event)">
     <div class="media-card-top">
       <div class="group-arrow left" onclick="mudarGrupo('videos', -1, event)">❮</div>
       <div class="group-arrow right" onclick="mudarGrupo('videos', 1, event)">❯</div>
@@ -313,8 +336,8 @@
   </section>
 
   <!-- JOGOS -->
-  <div class="section-title" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
-  <section class="card media-card" id="card-jogos" onclick="toggleCard('card-jogos', event)">
+  <div class="section-title fade-section" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
+  <section class="card media-card fade-section" id="card-jogos" onclick="toggleCard('card-jogos', event)">
     <div class="media-card-top">
       <div class="media-thumbnails-container">
         <div class="overlay-text">(clique para expandir)</div>
@@ -330,8 +353,8 @@
   </section>
 
   <!-- CONTATO -->
-  <div class="section-title" id="contato">Contato</div>
-  <section class="card" style="cursor: default;">
+  <div class="section-title fade-section" id="contato">Contato</div>
+  <section class="card fade-section" id="card-contato" style="cursor: default;">
     <div class="icones">
       <div class="icone" onclick="mostrarPopup('whatsapp')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/whatsapp.png" alt="WhatsApp"></div>
       <div class="icone" onclick="mostrarPopup('email')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/gmail.png" alt="Gmail"></div>
@@ -563,7 +586,7 @@
     }
 
     // ==========================================
-    // LÓGICA DE ROLAGEM E SETAS DINÂMICAS (SCROLL HORIZONTAL)
+    // LÓGICA DE ROLAGEM E SETAS DINÂMICAS E ATALHOS
     // ==========================================
     function scrollMedia(btn, direcao, event) {
       if(event) event.stopPropagation();
@@ -590,6 +613,27 @@
     document.querySelectorAll('.scroll-container').forEach(container => {
       container.addEventListener('scroll', () => checkArrows(container.parentElement));
     });
+
+    // Função de Rolagem Aprimorada para o Centro com Efeito Brilho
+    function scrollToSection(id) { 
+      const cardId = id === 'contato' ? 'card-contato' : 'card-' + id;
+      const cardEl = document.getElementById(cardId);
+      
+      if (cardEl) {
+        // Rola até deixar a caixa no centro da tela
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Remove a classe se existir, força atualização e adiciona de novo para reiniciar a animação
+        cardEl.classList.remove('glow-effect');
+        void cardEl.offsetWidth; 
+        cardEl.classList.add('glow-effect');
+        
+        // Remove o brilho após os 2 segundos definidos no CSS
+        setTimeout(() => {
+          cardEl.classList.remove('glow-effect');
+        }, 2000);
+      }
+    }
 
     // ==========================================
     // LÓGICA DO BOTÃO TOPO (FLUTUANTE)
@@ -632,8 +676,6 @@
       alert("Copiado com sucesso!"); fecharPopup();
     }
 
-    function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
-
     // Arrasto do popup de contato
     document.addEventListener('mousedown', e => {
       if (e.target.closest('#popup p')) {
@@ -656,6 +698,68 @@
         fecharPopup();
       }
     });
+
+    // ==========================================
+    // LÓGICA DE OPACIDADE AO ROLAR
+    // ==========================================
+    function checkScrollFocus() {
+      const elements = document.querySelectorAll('.fade-section');
+      const viewHeight = window.innerHeight;
+      const centerOfScreen = viewHeight / 2;
+
+      elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if(rect.height === 0) return; 
+        
+        const elCenter = rect.top + rect.height / 2;
+        const distToCenter = Math.abs(elCenter - centerOfScreen);
+
+        // Atinge o foco se o centro do elemento estiver na faixa de 1/3 do centro da tela
+        if (distToCenter < viewHeight / 3) {
+          el.classList.add('in-focus');
+        } else {
+          el.classList.remove('in-focus');
+        }
+      });
+    }
+    window.addEventListener('scroll', checkScrollFocus);
+    window.addEventListener('resize', checkScrollFocus);
+    setTimeout(checkScrollFocus, 100);
+
+    // ==========================================
+    // LÓGICA DE SOM DE CLIQUE (SINTETIZADO)
+    // ==========================================
+    let audioCtx = null;
+    function playClickSound() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Tom da "Batida"
+      oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05); // Queda do Tom
+      
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Volume suave
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); // Fim da reprodução
+      
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.05);
+    }
+
+    document.addEventListener('click', (e) => {
+      // Dispara o som em qualquer clique que seja interativo
+      if (e.target.closest('.section-title, .card, button, .icone, .atalho-icone, .atalho-texto, .group-arrow, .scroll-arrow, .image-wrapper, .jogo-banner, .lb-arrow, .lb-close, .popup')) {
+        playClickSound();
+      }
+    });
+
   </script>
 </body>
 </html>
