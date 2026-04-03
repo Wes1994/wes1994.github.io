@@ -10,18 +10,79 @@
       body {
         margin: 0; font-family: 'Segoe UI', sans-serif;
         background-color: #2F3D48; color: #ffffff;
-        padding: 0 5mm; box-sizing: border-box;
+        padding: 0; box-sizing: border-box;
         scrollbar-width: thin; scrollbar-color: #6c7c89 #2F3D48;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%234a5568' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+        overflow-x: hidden;
       }
       body::-webkit-scrollbar { width: 10px; }
       body::-webkit-scrollbar-track { background: #2F3D48; }
       body::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
 
-      .hero { text-align: center; padding: 40px 20px 10px; }
+      /* Cabeçalho Persistente (Sticky) - 70% Opacidade */
+      .sticky-header {
+        position: sticky; top: 0; z-index: 1000;
+        background-color: rgba(47, 61, 72, 0.7);
+        backdrop-filter: blur(8px);
+        padding: 10px 5mm 5px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      }
+      
+      .header-top {
+        display: flex; width: 100%; max-width: 800px; margin: 0 auto 8px; gap: 10px; align-items: center;
+      }
+
+      /* Reduzido em 1/3 (de 42px para 28px) */
+      .btn-entrar {
+        background-color: #6c7c89; color: white; border: none; border-radius: 8px;
+        height: 28px; padding: 0 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+        transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .btn-entrar:hover { background-color: #8495a3; transform: translateY(-2px); }
+
+      .tabs-container {
+        display: flex; flex: 1; background-color: #4a5e6c; border-radius: 8px; overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2); height: 28px;
+      }
+      .tab {
+        flex: 1; text-align: center; cursor: pointer; color: #a0aec0; font-weight: 600; font-size: 0.85rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: background-color 0.3s, color 0.3s; padding: 0;
+      }
+      .tab.active { background-color: #6c7c89; color: #ffffff; }
+
+      /* Atalhos */
+      .atalhos { margin: 0 auto; max-width: 800px; }
+      .atalhos-lista {
+        list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
+        justify-content: center; flex-wrap: wrap;
+      }
+      .atalhos-lista li {
+        flex: 0 0 auto; background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
+        transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        height: 32px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+      }
+      .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
+      .atalho-texto { width: 75px; font-size: 0.95rem; text-align: center; } 
+      .atalho-icone { width: 32px; padding: 0; } 
+      .atalho-icone img { height: 20px; width: auto; object-fit: contain; }
+
+      /* Estrutura Deslizante (Swipe) */
+      .swipe-viewport {
+        width: 100vw; max-width: 100%; overflow-x: hidden; position: relative;
+      }
+      .swipe-track {
+        display: flex; width: 200%; will-change: transform;
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      .swipe-pane {
+        width: 50%; padding: 0 5mm; box-sizing: border-box; flex-shrink: 0;
+      }
+
+      .hero { text-align: center; padding: 20px 20px 10px; }
       .hero p {
         font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700;
-        margin-bottom: 8px; text-shadow: 0 0 8px #ffffff88;
+        margin-bottom: 8px; margin-top: 0; text-shadow: 0 0 8px #ffffff88;
         animation: scaleOpacity 2s infinite alternate;
       }
       .hero h1 { font-size: 1rem; font-weight: 400; color: #c9d6e2; margin: 0; animation: pulse 2s infinite alternate; }
@@ -47,19 +108,14 @@
         font-size: 1rem; line-height: 1.4; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         cursor: pointer; 
         transition: opacity 0.4s ease, box-shadow 0.3s, background-color 0.3s;
+        position: relative;
       }
       .card.open { cursor: default; }
 
       /* Texto expansível simples (Descrição) */
-      .expandable {
-        transition: all 0.3s ease; position: relative;
-      }
-      .expandable .desc-hidden {
-        display: none;
-      }
-      .expandable.open .desc-hidden {
-        display: block;
-      }
+      .expandable { transition: all 0.3s ease; position: relative; }
+      .expandable .desc-hidden { display: none; }
+      .expandable.open .desc-hidden { display: block; }
       .expandable::after {
         content: "❯";
         display: block; width: fit-content; margin: 5px auto -15px;
@@ -69,7 +125,7 @@
       .expandable.open::after { content: ""; display: none; }
       
       /* Opacidade de Rolagem */
-      .fade-section { opacity: 0.4; }
+      .fade-section { opacity: 0.4; transition: opacity 0.4s ease; }
       .fade-section.in-focus { opacity: 1; }
 
       /* Efeito de pulso de brilho */
@@ -78,82 +134,71 @@
         30% { box-shadow: 0 0 25px 8px rgba(207, 221, 233, 0.5); transform: scale(1.02); }
         100% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
       }
-      .glow-effect {
-        animation: pulseGlow 2s ease-out;
-      }
+      .glow-effect { animation: pulseGlow 2s ease-out; }
 
-      /* Atalhos */
-      .atalhos-lista {
-        list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
-        justify-content: center; 
-        flex-wrap: wrap; padding-bottom: 5px;
+      /* Sistema de Reações (Curtir/Não Curtir) */
+      .reactions-container {
+        position: absolute; bottom: 10px; right: 10px;
+        display: flex; gap: 8px; z-index: 20;
+        background: rgba(47, 61, 72, 0.6); padding: 4px 10px; border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
-      .atalhos-lista li {
-        flex: 0 0 auto; 
-        background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
-        transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        height: 32px; 
-        box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+      .reaction-btn {
+        cursor: pointer; font-size: 1.1rem; user-select: none; opacity: 0.5;
+        transition: transform 0.2s, opacity 0.2s;
       }
-      .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
-      .atalho-texto { width: 75px; font-size: 0.95rem; text-align: center; } 
-      .atalho-icone { width: 32px; padding: 0; } 
-      .atalho-icone img { height: 20px; width: auto; object-fit: contain; }
+      .reaction-btn:hover { transform: scale(1.2); }
+      .reaction-btn.active { opacity: 1; filter: drop-shadow(0 0 4px #fff); transform: scale(1.1); }
+      
+      /* Botão Aleatório */
+      .random-btn {
+        position: absolute; top: 15px; right: 15px; font-size: 1.3rem; cursor: pointer;
+        background: rgba(47, 61, 72, 0.6); border-radius: 50%; padding: 6px; z-index: 20;
+        transition: transform 0.3s; color: white; display: flex; align-items: center; justify-content: center;
+      }
+      .random-btn:hover { transform: rotate(180deg); }
+
+      /* Sistema de Contração de Posts */
+      .post-card {
+        position: relative; height: 180px; overflow: hidden; display: flex; flex-direction: column;
+      }
+      .post-card::after {
+        content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
+        background: linear-gradient(transparent, #4a5e6c 90%); pointer-events: none; border-radius: 20px;
+      }
 
       /* Estrutura das Mídias Expansíveis */
       .media-card-top { position: relative; width: 100%; }
-      
       .media-card .scroll-wrapper { display: none; position: relative; width: 100%; margin-top: 15px; }
       .media-card.open .scroll-wrapper { display: block; }
       
-      /* Títulos de Grupos (Casuais, Dança, etc) */
       .group-header-container {
         display: flex; justify-content: center; align-items: center;
-        margin-top: -10px; margin-bottom: 5px;
-        min-height: 24px; width: 100%;
+        margin-top: -10px; margin-bottom: 5px; min-height: 24px; width: 100%;
       }
-      .expand-header {
-        text-align: center; color: #a0aec0; font-size: 0.85rem; font-weight: 400; padding: 0; margin: 0;
-      }
+      .expand-header { text-align: center; color: #a0aec0; font-size: 0.85rem; font-weight: 400; padding: 0; margin: 0; }
       
-      /* Setas Grandes Simétricas nas Laterais */
       .group-arrow {
         position: absolute; top: 50%; transform: translateY(-50%);
         font-size: 3rem; font-weight: 300; color: #6c7c89; cursor: pointer; user-select: none;
-        transition: color 0.3s, transform 0.2s, opacity 0.3s;
-        z-index: 10;
+        transition: color 0.3s, transform 0.2s, opacity 0.3s; z-index: 10;
       }
       .group-arrow:hover { color: #cfdde9; transform: translateY(-50%) scale(1.1); }
       .group-arrow.left { left: -10px; }
       .group-arrow.right { right: -10px; }
 
-      /* Miniaturas e Overlay Flutuante */
-      .media-thumbnails-container {
-        position: relative; display: flex; align-items: center; justify-content: center;
-        width: 100%;
-        min-height: 52px; /* Garante que a altura não diminua quando não houver miniaturas */
-      }
+      .media-thumbnails-container { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; }
       .media-card.open .media-thumbnails-container { display: none; }
       
       .overlay-text {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        color: #cfdde9;
-        font-size: 0.9rem; font-weight: 600; z-index: 5;
-        text-shadow: 0px 1px 4px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,1); /* Sombreamento para leitura em fundos claros */
-        white-space: nowrap; /* Mantém em 1 linha no celular */
-        pointer-events: none; /* Permite clicar através dele */
+        color: #cfdde9; font-size: 0.9rem; font-weight: 600; z-index: 5;
+        text-shadow: 0px 1px 4px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,1); white-space: nowrap; pointer-events: none;
       }
       
-      .media-thumbnails {
-        display: flex; gap: 10px; justify-content: center; overflow: hidden; width: 100%;
-        opacity: 0.8; /* Dá uma leve ofuscada pra dar destaque ao texto por cima */
-      }
-      .media-thumbnail-img {
-        height: 52px; width: auto; max-width: 80px;
-        object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
+      .media-thumbnails { display: flex; gap: 10px; justify-content: center; overflow: hidden; width: 100%; opacity: 0.8; }
+      .media-thumbnail-img { height: 52px; width: auto; max-width: 80px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-      /* Setas de Rolagem do Carrossel Interno */
       .scroll-arrow {
         position: absolute; top: 50%; transform: translateY(-50%);
         background-color: #6c7c89; color: white; border: 2px solid #2F3D48; border-radius: 50%;
@@ -166,217 +211,301 @@
       .scroll-arrow.right { right: -10px; }
       .scroll-arrow.disabled { opacity: 0; pointer-events: none; }
 
-      /* Scroll Horizontal Interno */
-      .scroll-container {
-        display: flex; flex-direction: row; gap: 20px; overflow-x: auto; padding-bottom: 10px; width: 100%;
-        scroll-behavior: smooth;
-      }
+      .scroll-container { display: flex; flex-direction: row; gap: 20px; overflow-x: auto; padding-bottom: 10px; width: 100%; scroll-behavior: smooth; }
       .scroll-container::-webkit-scrollbar { height: 8px; }
       .scroll-container::-webkit-scrollbar-track { background: #2F3D48; border-radius: 10px; }
       .scroll-container::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
 
-      /* Fotos */
+      /* Fotos e Legendas */
+      .image-card { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; max-width: 85vw; }
       .image-wrapper {
-        flex: 0 0 auto; height: 280px; border-radius: 12px; overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3); background-color: #2F3D48; cursor: pointer;
-        transition: transform 0.3s;
+        height: 280px; border-radius: 12px; overflow: hidden; position: relative;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3); background-color: #2F3D48; cursor: pointer; transition: transform 0.3s; display: flex; justify-content: center;
       }
       .image-wrapper:hover { transform: scale(1.02); }
-      .image-wrapper img { height: 100%; width: auto; display: block; object-fit: cover; max-width: 85vw; }
+      .image-wrapper img { height: 100%; width: auto; display: block; object-fit: cover; }
+      .foto-caption {
+        font-family: 'Segoe UI', sans-serif; font-size: 0.85rem; color: #a0aec0; text-align: center;
+        margin-top: 8px; width: 100%; max-width: 280px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;
+      }
 
       /* Vídeos */
-      .video-wrapper {
-        position: relative; flex: 0 0 auto; width: 80vw; max-width: 280px; 
-        aspect-ratio: 9 / 16; border-radius: 12px; overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3); background-color: #2F3D48;
-      }
+      .video-wrapper { position: relative; flex: 0 0 auto; width: 80vw; max-width: 280px; aspect-ratio: 9 / 16; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); background-color: #2F3D48; }
       .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
       /* Jogos */
-      .jogo-banner {
-        flex: 0 0 auto; width: 80vw; max-width: 280px; height: 160px;
-        display: block; border-radius: 8px; overflow: hidden; text-decoration: none;
-        transition: transform 0.3s; background-color: #2F3D48; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      }
+      .jogo-banner { flex: 0 0 auto; width: 80vw; max-width: 280px; height: 160px; display: block; border-radius: 8px; overflow: hidden; text-decoration: none; transition: transform 0.3s; background-color: #2F3D48; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
       .jogo-banner:hover { transform: scale(1.03); }
       .jogo-banner img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
 
       /* Ícones Contato */
       .icones { display: flex; gap: 7.5px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
-      .icone {
-        width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: transform 0.3s;
-      }
+      .icone { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; }
       .icone:hover { transform: scale(1.2); }
       .icone img { width: 35px; height: 35px; object-fit: contain; }
 
-      /* Lightbox de Imagens */
+      /* Lightbox Base (Imagens e Texto) */
       .lightbox {
-        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background-color: rgba(0,0,0,0.7); z-index: 3000;
-        justify-content: center; align-items: center;
+        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center;
       }
-      .lightbox img {
-        max-width: 100vw; max-height: 100vh; object-fit: contain;
-        touch-action: pan-x pan-y pinch-zoom;
+      .lightbox img { max-width: 100vw; max-height: 100vh; object-fit: contain; touch-action: pan-x pan-y pinch-zoom; }
+      
+      .text-lightbox-container {
+        background-color: transparent; width: 100vw; height: 100vh;
+        padding: 80px 20px 100px; box-sizing: border-box; overflow-y: auto; color: #cfdde9; position: relative;
+        line-height: 1.6; font-size: 1.1rem;
       }
-      .lb-arrow {
-        position: absolute; top: 50%; transform: translateY(-50%);
-        background-color: #6c7c89; color: white; border: none; border-radius: 50%;
-        width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; z-index: 3001;
-        display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-      }
+      .text-lightbox-container::-webkit-scrollbar { width: 8px; }
+      .text-lightbox-container::-webkit-scrollbar-track { background: transparent; }
+      .text-lightbox-container::-webkit-scrollbar-thumb { background-color: #6c7c89; border-radius: 10px; }
+
+      .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); background-color: #6c7c89; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; z-index: 3001; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
       .lb-arrow:hover { background-color: #8495a3; }
       .lb-arrow.left { left: 15px; }
       .lb-arrow.right { right: 15px; }
-      .lb-close {
-        position: absolute; top: 20px; right: 20px; background-color: #6c7c89; color: white; border: none; 
-        border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; z-index: 3001;
-      }
+      .lb-close { position: absolute; top: 20px; right: 20px; background-color: #6c7c89; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; z-index: 3001; }
 
       /* Popup Contato */
-      .popup {
-        display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        background-color: #4a5e6c; padding: 20px; border-radius: 12px; z-index: 2000;
-        box-shadow: 0 0 15px rgba(0,0,0,0.4); text-align: center; border: 1px solid #6c7c89;
-      }
+      .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #4a5e6c; padding: 20px; border-radius: 12px; z-index: 2000; box-shadow: 0 0 15px rgba(0,0,0,0.4); text-align: center; border: 1px solid #6c7c89; }
       .popup p { cursor: move; margin-top: 0; font-weight: bold; }
-      .popup button {
-        margin: 5px; padding: 8px 14px; background-color: #6c7c89; color: #fff;
-        border: none; border-radius: 8px; cursor: pointer; transition: 0.3s;
-      }
+      .popup button { margin: 5px; padding: 8px 14px; background-color: #6c7c89; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
       .popup button:hover { background-color: #8495a3; }
 
-      /* Botão Flutuante TOPO */
-      #btnTopo {
-        display: none; position: fixed; bottom: 20px; right: 20px; z-index: 999;
-        background-color: #6c7c89; color: white; border: 2px solid #2F3D48;
-        padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background-color 0.3s, transform 0.3s;
-      }
+      #btnTopo { display: none; position: fixed; bottom: 20px; left: 20px; z-index: 999; background-color: #6c7c89; color: white; border: 2px solid #2F3D48; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background-color 0.3s, transform 0.3s; }
       #btnTopo:hover { background-color: #8495a3; transform: translateY(-2px); }
     </style>
 </head>
 <body>
-  <section class="hero">
-    <p style="white-space: nowrap;">Espaço Digital</p>
-    <h1>Seja Bem Vindo!</h1>
-  </section>
 
-  <section class="card atalhos fade-section" style="background: transparent; box-shadow: none; padding: 0; cursor: default;">
-    <ul class="atalhos-lista">
-      <li class="atalho-icone" onclick="scrollToSection('contato')">
-        <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
-      </li>
-      <li class="atalho-texto" onclick="scrollToSection('fotos')">Fotos</li>
-      <li class="atalho-texto" onclick="scrollToSection('videos')">Vídeos</li>
-      <li class="atalho-texto" onclick="scrollToSection('jogos')">Jogos</li>
-    </ul>
-  </section>
-
-  <div class="section-title fade-section" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
-  <section class="card expandable fade-section" id="card-sobre" onclick="toggleCard('card-sobre', event)">
-    <div class="desc-main">
-      Página pessoal, mas também profissional. Feita para livre-expressão, exposição de fotos, vídeos, projetos e portifólios em andamento.
-    </div>
-    <div class="desc-hidden">
-      <div style="font-size: 1.1rem; font-weight: 600; color: #a0aec0; margin: 15px 0 5px;">Sobre Mim</div>
-      <div>
-        Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
-      </div>
-    </div>
-  </section>
-
-  <!-- FOTOS -->
-  <div class="section-title fade-section" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
-  <section class="card media-card fade-section" id="card-fotos" onclick="toggleCard('card-fotos', event)">
-    <div class="media-card-top">
-      <div class="group-arrow left" onclick="mudarGrupo('fotos', -1, event)">❮</div>
-      <div class="group-arrow right" onclick="mudarGrupo('fotos', 1, event)">❯</div>
-      
-      <div class="group-header-container">
-        <div class="expand-header" id="header-fotos">Casuais</div>
-      </div>
-      
-      <div class="media-thumbnails-container">
-        <div class="overlay-text">(clique para expandir)</div>
-        <div class="media-thumbnails" id="fotos-thumbs"></div>
+  <!-- Cabeçalho Persistente (Botão Entrar, Abas e Atalhos) -->
+  <header class="sticky-header">
+    <div class="header-top">
+      <button class="btn-entrar" onclick="playClickSound()">Entrar</button>
+      <div class="tabs-container">
+        <div class="tab active" onclick="switchTab(0)">Inicial</div>
+        <div class="tab" onclick="switchTab(1)">Posts</div>
       </div>
     </div>
     
-    <div class="scroll-wrapper">
-      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
-      <div class="media-content scroll-container" id="fotos-scroll"></div>
-      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
+    <div class="atalhos">
+      <ul class="atalhos-lista">
+        <li class="atalho-icone" onclick="scrollToSection('contato')">
+          <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
+        </li>
+        <li class="atalho-texto" onclick="scrollToSection('fotos')">Fotos</li>
+        <li class="atalho-texto" onclick="scrollToSection('videos')">Vídeos</li>
+        <li class="atalho-texto" onclick="scrollToSection('jogos')">Jogos</li>
+      </ul>
     </div>
-  </section>
+  </header>
 
-  <!-- VÍDEOS -->
-  <div class="section-title fade-section" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
-  <section class="card media-card fade-section" id="card-videos" onclick="toggleCard('card-videos', event)">
-    <div class="media-card-top">
-      <div class="group-arrow left" onclick="mudarGrupo('videos', -1, event)">❮</div>
-      <div class="group-arrow right" onclick="mudarGrupo('videos', 1, event)">❯</div>
+  <div class="swipe-viewport">
+    <div class="swipe-track" id="swipe-track">
       
-      <div class="group-header-container">
-        <div class="expand-header" id="header-videos">Dança</div>
-      </div>
-      
-      <div class="media-thumbnails-container">
-        <div class="overlay-text">(clique para expandir)</div>
-        <div class="media-thumbnails" id="videos-thumbs"></div>
-      </div>
-    </div>
-    
-    <div class="scroll-wrapper">
-      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
-      <div class="media-content scroll-container" id="videos-scroll"></div>
-      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
-    </div>
-  </section>
+      <!-- PANE 0: ABA INICIAL -->
+      <div class="swipe-pane">
+        <section class="hero">
+          <p style="white-space: nowrap;">Espaço Digital</p>
+          <h1>Seja Bem Vindo!</h1>
+        </section>
 
-  <!-- JOGOS -->
-  <div class="section-title fade-section" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
-  <section class="card media-card fade-section" id="card-jogos" onclick="toggleCard('card-jogos', event)">
-    <div class="media-card-top">
-      <div class="media-thumbnails-container">
-        <div class="overlay-text">(clique para expandir)</div>
-        <div class="media-thumbnails" id="jogos-thumbs"></div>
-      </div>
-    </div>
-    
-    <div class="scroll-wrapper">
-      <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
-      <div class="media-content scroll-container" id="jogos-scroll"></div>
-      <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
-    </div>
-  </section>
+        <div class="section-title fade-section" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
+        <section class="card expandable fade-section" id="card-sobre" onclick="toggleCard('card-sobre', event)">
+          <div class="desc-main">
+            Página pessoal, mas também profissional. Feita para livre-expressão, exposição de fotos, vídeos, projetos e portifólios em andamento.
+          </div>
+          <div class="desc-hidden">
+            <div style="font-size: 1.1rem; font-weight: 600; color: #a0aec0; margin: 15px 0 5px;">Sobre Mim</div>
+            <div>
+              Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
+            </div>
+          </div>
+        </section>
 
-  <!-- CONTATO -->
-  <div class="section-title fade-section" id="contato">Contato</div>
-  <section class="card fade-section" id="card-contato" style="cursor: default;">
-    <div class="icones">
-      <div class="icone" onclick="mostrarPopup('whatsapp')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/whatsapp.png" alt="WhatsApp"></div>
-      <div class="icone" onclick="mostrarPopup('email')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/gmail.png" alt="Gmail"></div>
-      <a href="https://www.instagram.com/wesley.buenno" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/instagram.png" alt="Instagram"></a>
-      <a href="https://www.facebook.com/Wesley.Bueno" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/facebook.png" alt="Facebook"></a>
-      <a href="https://www.tiktok.com/@wesfbs" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/tik-tok.png" alt="TikTok"></a>
-      <a href="https://www.youtube.com/@Wesley-FBS" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/youtube.png" alt="YouTube"></a>
+        <!-- PRÉVIA DOS POSTS -->
+        <div class="section-title fade-section" onclick="switchTab(1)">Posts</div>
+        <section class="card fade-section" onclick="switchTab(1)" id="post-preview-card" style="min-height: 100px;">
+          <!-- Injetado pelo renderPosts() -->
+        </section>
+
+        <!-- FOTOS -->
+        <div class="section-title fade-section" id="fotos" title="Clique para expandir/recolher" onclick="toggleCard('card-fotos', event)">Fotos</div>
+        <section class="card media-card fade-section" id="card-fotos" onclick="toggleCard('card-fotos', event)">
+          <div class="media-card-top">
+            <div class="group-arrow left" onclick="mudarGrupo('fotos', -1, event)">❮</div>
+            <div class="group-arrow right" onclick="mudarGrupo('fotos', 1, event)">❯</div>
+            
+            <div class="group-header-container">
+              <div class="expand-header" id="header-fotos">Casuais</div>
+            </div>
+            
+            <div class="media-thumbnails-container">
+              <div class="overlay-text">(clique para expandir)</div>
+              <div class="media-thumbnails" id="fotos-thumbs"></div>
+            </div>
+          </div>
+          
+          <div class="scroll-wrapper">
+            <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
+            <div class="media-content scroll-container" id="fotos-scroll"></div>
+            <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
+          </div>
+        </section>
+
+        <!-- VÍDEOS -->
+        <div class="section-title fade-section" id="videos" title="Clique para expandir/recolher" onclick="toggleCard('card-videos', event)">Vídeos</div>
+        <section class="card media-card fade-section" id="card-videos" onclick="toggleCard('card-videos', event)">
+          <div class="media-card-top">
+            <div class="group-arrow left" onclick="mudarGrupo('videos', -1, event)">❮</div>
+            <div class="group-arrow right" onclick="mudarGrupo('videos', 1, event)">❯</div>
+            
+            <div class="group-header-container">
+              <div class="expand-header" id="header-videos">Dança</div>
+            </div>
+            
+            <div class="media-thumbnails-container">
+              <div class="overlay-text">(clique para expandir)</div>
+              <div class="media-thumbnails" id="videos-thumbs"></div>
+            </div>
+          </div>
+          
+          <div class="scroll-wrapper">
+            <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
+            <div class="media-content scroll-container" id="videos-scroll"></div>
+            <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
+          </div>
+        </section>
+
+        <!-- JOGOS -->
+        <div class="section-title fade-section" id="jogos" title="Clique para expandir/recolher" onclick="toggleCard('card-jogos', event)">Jogos</div>
+        <section class="card media-card fade-section" id="card-jogos" onclick="toggleCard('card-jogos', event)">
+          <div class="media-card-top">
+            <div class="media-thumbnails-container">
+              <div class="overlay-text">(clique para expandir)</div>
+              <div class="media-thumbnails" id="jogos-thumbs"></div>
+            </div>
+          </div>
+          
+          <div class="scroll-wrapper">
+            <button class="scroll-arrow left disabled" onclick="scrollMedia(this, -1, event)">❮</button>
+            <div class="media-content scroll-container" id="jogos-scroll"></div>
+            <button class="scroll-arrow right disabled" onclick="scrollMedia(this, 1, event)">❯</button>
+          </div>
+        </section>
+
+        <!-- CONTATO -->
+        <div class="section-title fade-section" id="contato">Contato</div>
+        <section class="card fade-section" id="card-contato" style="cursor: default; margin-bottom: 50px;">
+          <div class="icones">
+            <div class="icone" onclick="mostrarPopup('whatsapp')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/whatsapp.png" alt="WhatsApp"></div>
+            <div class="icone" onclick="mostrarPopup('email')"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/gmail.png" alt="Gmail"></div>
+            <a href="https://www.instagram.com/wesley.buenno" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/instagram.png" alt="Instagram"></a>
+            <a href="https://www.facebook.com/Wesley.Bueno" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/facebook.png" alt="Facebook"></a>
+            <a href="https://www.tiktok.com/@wesfbs" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/tik-tok.png" alt="TikTok"></a>
+            <a href="https://www.youtube.com/@Wesley-FBS" class="icone" target="_blank"><img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/youtube.png" alt="YouTube"></a>
+          </div>
+        </section>
+      </div>
+
+      <!-- PANE 1: ABA POSTS -->
+      <div class="swipe-pane">
+        <div class="section-title fade-section" style="margin-top: 30px;">Postagens</div>
+        <div id="posts-list-container">
+          <!-- Injetado pelo renderPosts() -->
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
 
   <button id="btnTopo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Topo</button>
 
   <div class="popup" id="popup"></div>
 
+  <!-- Lightbox Imagens -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <button class="lb-close" onclick="closeLightbox(event)">✖</button>
     <button class="lb-arrow left" id="lb-prev" onclick="navLightbox(-1, event)">❮</button>
-    <img id="lightbox-img" src="" alt="Imagem Ampliada" onclick="event.stopPropagation()">
+    <img id="lightbox-img" src="" alt="Imagem Ampliada" onclick="event.stopPropagation()" ondblclick="doubleClickLike('fotos', currentPhotoFullId, event)">
     <button class="lb-arrow right" id="lb-next" onclick="navLightbox(1, event)">❯</button>
+    
+    <!-- Reações dentro do Lightbox de imagem -->
+    <div id="lb-reactions-container" class="reactions-container" style="bottom: 30px; right: 30px; padding: 10px 15px; font-size: 1.5rem;" onclick="event.stopPropagation()">
+       <!-- Injetado via JS -->
+    </div>
+  </div>
+
+  <!-- Lightbox Texto (Posts em Tela Cheia) -->
+  <div id="text-lightbox" class="lightbox" onclick="closeTextLightbox(event)">
+    <button class="lb-close" onclick="closeTextLightbox(event)">✖</button>
+    <button class="lb-arrow left" id="tl-prev" onclick="navTextLightbox(-1, event)">❮</button>
+    
+    <div class="text-lightbox-container" onclick="event.stopPropagation()" ondblclick="doubleClickLike('posts', currentTextPostId, event)">
+      <h2 id="tl-title" style="margin-top: 0; color: #ffffff; font-family: 'Playfair Display', serif; font-size: 2rem;"></h2>
+      <div id="tl-body" style="font-size: 1.2rem;"></div>
+    </div>
+
+    <!-- Reações dentro do Lightbox de texto -->
+    <div id="tl-reactions-container" class="reactions-container" style="bottom: 30px; right: 30px; padding: 10px 15px; font-size: 1.5rem; position: fixed;" onclick="event.stopPropagation()">
+      <!-- Injetado via JS -->
+    </div>
+
+    <button class="lb-arrow right" id="tl-next" onclick="navTextLightbox(1, event)">❯</button>
   </div>
 
   <script>
+    // ==========================================
+    // SISTEMA DE DADOS DE REAÇÕES (Curtidas Globais)
+    // ==========================================
+    const userReactions = {
+      posts: {},
+      fotos: {},
+      videos: {}
+    };
+
+    function toggleReaction(type, id, reactionType, event) {
+      if(event) event.stopPropagation();
+      playClickSound();
+      const current = userReactions[type][id];
+      if (current === reactionType) {
+        userReactions[type][id] = null; 
+      } else {
+        userReactions[type][id] = reactionType; 
+      }
+      updateAllReactionsUI();
+    }
+
+    function doubleClickLike(type, id, event) {
+      if(event) event.stopPropagation();
+      userReactions[type][id] = 'like';
+      updateAllReactionsUI();
+      // Opcional: Feedback visual direto (Brilho/Pop)
+      playClickSound();
+    }
+
+    function updateAllReactionsUI() {
+      // Atualiza todos os elementos na tela que contenham o atributo data-react-id
+      document.querySelectorAll('.react-btn-like').forEach(btn => {
+        const type = btn.getAttribute('data-type');
+        const id = btn.getAttribute('data-id');
+        btn.classList.toggle('active', userReactions[type][id] === 'like');
+      });
+      document.querySelectorAll('.react-btn-dislike').forEach(btn => {
+        const type = btn.getAttribute('data-type');
+        const id = btn.getAttribute('data-id');
+        btn.classList.toggle('active', userReactions[type][id] === 'dislike');
+      });
+    }
+
+    function generateReactionsHTML(type, id) {
+      const likeActive = userReactions[type][id] === 'like' ? 'active' : '';
+      const dislikeActive = userReactions[type][id] === 'dislike' ? 'active' : '';
+      return `
+        <div class="reaction-btn react-btn-like ${likeActive}" data-type="${type}" data-id="${id}" onclick="toggleReaction('${type}', '${id}', 'like', event)">👍</div>
+        <div class="reaction-btn react-btn-dislike ${dislikeActive}" data-type="${type}" data-id="${id}" onclick="toggleReaction('${type}', '${id}', 'dislike', event)">👎</div>
+      `;
+    }
+
     // ==========================================
     // SISTEMA DE DADOS DE GRUPOS E MÍDIAS
     // ==========================================
@@ -403,10 +532,198 @@
       ]
     };
 
-    let fotosGaleriaAtual = []; // Guarda as fotos do grupo atual para o Lightbox
+    const legendasCasuais = [
+      "Testando roupas e técnicas de edição ao mesmo tempo.",
+      "Treinando com o irmão no Arsenal Maromba.",
+      "Resenha com os amigos no apê do Lucas transformado em anime pelo GPT.",
+      "Trilha do Guardião em Queluz. Passamos por vários poços de água cristalina na companhia da Bárbara.",
+      "Trilha do Guardião em Queluz. Passamos por vários poços de água cristalina na companhia da Bárbara.",
+      "Dançando forró com Thalita de Almeida, na Casa da Mãe Tiana, ao som de Dorgival Dantas.",
+      "Dançando Xote Swingado no Forró de Meia, na academia do Cleiton Lima, em Taubaté.",
+      "Mais um dia de forró com os amigos na Casa da Mãe Tiana."
+    ];
 
     // ==========================================
-    // LÓGICA DE EXPANDIR CAIXAS E ATALHOS
+    // DADOS E RENDERIZAÇÃO DOS POSTS (Com Sorteio)
+    // ==========================================
+    const postsData = [
+      { 
+        id: 'post_1',
+        title: "A Memória dos Corvos", 
+        content: "Os corvos são extremamente inteligentes e conseguem reconhecer e lembrar de rostos humanos. Se uma pessoa os ameaçar, eles não apenas guardarão rancor por anos, como também irão comunicar isso ao resto do bando. O grupo inteiro pode passar a hostilizar aquela pessoa específica, mesmo que os outros corvos nunca a tenham visto antes." 
+      },
+      { 
+        id: 'post_2',
+        title: "O Uivo dos Lobos", 
+        content: "Ao contrário da imagem clássica dos cinemas, os lobos não uivam para a lua cheia. Eles uivam para se comunicar: seja para reunir a matilha, alertar rivais sobre os limites de seu território ou coordenar uma caçada. O motivo de levantarem a cabeça para o céu é puramente prático, pois a postura ajuda o som a viajar por distâncias muito maiores (podendo ser ouvido a até 16 quilômetros de distância em áreas abertas)." 
+      },
+      {
+        id: 'post_3',
+        title: "O Sono dos Golfinhos",
+        content: "Golfinhos têm uma forma de dormir fascinante chamada sono uni-hemisférico. Eles literalmente desligam apenas metade do cérebro por vez, enquanto a outra metade permanece alerta para respirar e observar a aproximação de predadores. Inclusive, enquanto uma metade dorme, o olho oposto permanece aberto!"
+      }
+    ];
+
+    postsData.sort(() => Math.random() - 0.5);
+
+    function shuffleFirstPost(event) {
+      if(event) event.stopPropagation();
+      if (postsData.length > 1) {
+        const randIndex = Math.floor(Math.random() * (postsData.length - 1)) + 1;
+        const temp = postsData[0];
+        postsData[0] = postsData[randIndex];
+        postsData[randIndex] = temp;
+        renderPosts();
+      }
+    }
+
+    function renderPosts() {
+      // Renderiza a Prévia na aba Inicial
+      const previewCard = document.getElementById('post-preview-card');
+      const previewText = postsData[0].content.substring(0, 100) + "...";
+      previewCard.innerHTML = `
+        <p style="margin: 0; font-size: 1rem; color: #cfdde9;">"${previewText}"</p>
+        <p style="margin: 10px 0 0; font-size: 0.85rem; color: #a0aec0; text-align: right;">Continuar lendo ❯</p>
+      `;
+
+      // Renderiza a lista na aba Posts
+      const listContainer = document.getElementById('posts-list-container');
+      listContainer.innerHTML = '';
+      
+      postsData.forEach((post, index) => {
+        const card = document.createElement('section');
+        card.className = 'card fade-section post-card';
+        card.onclick = () => openTextLightbox(index);
+        card.ondblclick = (e) => doubleClickLike('posts', post.id, e);
+        
+        const randomBtnHTML = index === 0 ? `<div class="random-btn" title="Embaralhar Primeira Postagem" onclick="shuffleFirstPost(event)">🔀</div>` : '';
+        
+        card.innerHTML = `
+          ${randomBtnHTML}
+          <p style="margin-top: 0; font-size: 1.2rem; font-family: 'Playfair Display', serif; font-weight: 700; color: #cfdde9; padding-right: 35px;">${post.title}</p>
+          <p style="margin: 0;">${post.content}</p>
+          <div class="reactions-container" onclick="event.stopPropagation()">
+            ${generateReactionsHTML('posts', post.id)}
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+
+      // Recalcula o foco após a inserção (para que não fiquem translúcidos se não deveriam)
+      setTimeout(checkScrollFocus, 100);
+    }
+
+    // ==========================================
+    // LÓGICA DO LIGHTBOX DE TEXTO (Leitor de Posts)
+    // ==========================================
+    let currentTextIndex = 0;
+    let currentTextPostId = '';
+
+    function openTextLightbox(index) {
+      currentTextIndex = index;
+      document.getElementById('text-lightbox').style.display = 'flex';
+      updateTextLightbox();
+    }
+
+    function updateTextLightbox() {
+      const post = postsData[currentTextIndex];
+      currentTextPostId = post.id;
+      
+      document.getElementById('tl-title').textContent = post.title;
+      document.getElementById('tl-body').innerHTML = `<p>${post.content}</p>`;
+      
+      // Atualiza Reações do Lightbox
+      document.getElementById('tl-reactions-container').innerHTML = generateReactionsHTML('posts', post.id);
+
+      document.getElementById('tl-prev').style.display = currentTextIndex > 0 ? 'flex' : 'none';
+      document.getElementById('tl-next').style.display = currentTextIndex < postsData.length - 1 ? 'flex' : 'none';
+    }
+
+    function navTextLightbox(direcao, event) {
+      if(event) event.stopPropagation();
+      currentTextIndex += direcao;
+      updateTextLightbox();
+    }
+
+    function closeTextLightbox(event) {
+      if(event) event.stopPropagation();
+      document.getElementById('text-lightbox').style.display = 'none';
+    }
+
+    // ==========================================
+    // LÓGICA DE ABAS E ARRASTE (SWIPE)
+    // ==========================================
+    const track = document.getElementById('swipe-track');
+    let startX = 0, startY = 0, prevTranslate = 0;
+    let isDraggingTrack = false, isScrollingY = false, tabIndex = 0;
+
+    function switchTab(index) {
+      tabIndex = index;
+      prevTranslate = index * -50; 
+      track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
+      track.style.transform = `translateX(${prevTranslate}%)`;
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === index));
+      
+      // Força o check de foco continuamente por 0.5s enquanto o css desliza para garantir visualização limpa
+      let focusCheckInterval = setInterval(checkScrollFocus, 50);
+      setTimeout(() => clearInterval(focusCheckInterval), 500);
+    }
+
+    function dragStart(e) {
+      if (e.target.closest('.scroll-container') || e.target.closest('.lightbox') || e.target.closest('button') || e.target.closest('.atalhos-lista')) return;
+      isDraggingTrack = true;
+      isScrollingY = false;
+      startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      startY = e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
+      track.style.transition = 'none';
+    }
+
+    function dragMove(e) {
+      if (!isDraggingTrack) return;
+      const x = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      const y = e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
+      const diffX = x - startX;
+      const diffY = y - startY;
+
+      if (!isScrollingY && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+        isDraggingTrack = false;
+        track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        track.style.transform = `translateX(${prevTranslate}%)`;
+        return;
+      }
+      
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if(e.cancelable) e.preventDefault(); 
+        let translate = prevTranslate + (diffX / window.innerWidth) * 100;
+        
+        if (translate > 0) translate = translate / 3;
+        if (translate < -50) translate = -50 + ((translate + 50) / 3);
+
+        track.style.transform = `translateX(${translate}%)`;
+        checkScrollFocus();
+      }
+    }
+
+    function dragEnd(e) {
+      if (!isDraggingTrack) return;
+      isDraggingTrack = false;
+      const x = e.type.includes('mouse') ? e.pageX : e.changedTouches[0].clientX;
+      const diffX = x - startX;
+      
+      if (diffX < -60 && tabIndex === 0) switchTab(1); 
+      else if (diffX > 60 && tabIndex === 1) switchTab(0); 
+      else switchTab(tabIndex); 
+    }
+
+    track.addEventListener('mousedown', dragStart);
+    track.addEventListener('touchstart', dragStart, {passive: true});
+    window.addEventListener('mousemove', dragMove);
+    window.addEventListener('touchmove', dragMove, {passive: false});
+    window.addEventListener('mouseup', dragEnd);
+    window.addEventListener('touchend', dragEnd);
+
+    // ==========================================
+    // LÓGICA DE EXPANDIR CAIXAS (Seções Antigas)
     // ==========================================
     function toggleCard(cardId, event) {
       if (event && (
@@ -431,11 +748,9 @@
 
     function mudarGrupo(section, direction, event) {
       if(event) event.stopPropagation(); 
-      
       const s = state[section];
       s.currentGroup += direction;
       
-      // Lógica de Loop Infinito (vai e volta pelas páginas)
       if (s.currentGroup < 0) s.currentGroup = s.groups.length - 1;
       if (s.currentGroup >= s.groups.length) s.currentGroup = 0;
 
@@ -444,7 +759,7 @@
     }
 
     // ==========================================
-    // AUTOMAÇÃO DO GITHUB (FOTOS)
+    // AUTOMAÇÃO DO GITHUB (FOTOS) E RENDERIZAÇÃO
     // ==========================================
     async function fetchGithubFolder(folderName) {
       const apiURL = `https://api.github.com/repos/espaco-digital/espaco-digital.github.io/contents/espacodigital/${folderName}`;
@@ -472,14 +787,12 @@
       state.fotos.groups[0].data = await fetchGithubFolder('imagens');
       state.fotos.groups[1].data = await fetchGithubFolder('imagens2');
       
+      renderPosts();
       renderizarFotos();
       renderizarVideos();
       renderizarJogos();
     }
 
-    // ==========================================
-    // FUNÇÕES DE RENDERIZAÇÃO
-    // ==========================================
     function renderizarFotos() {
       const group = state.fotos.groups[state.fotos.currentGroup];
       document.getElementById('header-fotos').textContent = group.name;
@@ -498,11 +811,35 @@
             const thumb = document.createElement('img'); thumb.src = foto; thumb.className = 'media-thumbnail-img';
             thumbsContainer.appendChild(thumb);
           }
+
+          const photoId = `foto_${state.fotos.currentGroup}_${index}`;
+          const itemCard = document.createElement('div');
+          itemCard.className = 'image-card';
+
           const wrapper = document.createElement('div'); wrapper.className = 'image-wrapper';
           wrapper.onclick = (e) => { e.stopPropagation(); openLightbox(index); };
+          wrapper.ondblclick = (e) => doubleClickLike('fotos', photoId, e);
+
           const img = document.createElement('img'); img.src = foto;
           wrapper.appendChild(img);
-          scrollContainer.appendChild(wrapper);
+
+          // Adiciona curtidas na miniatura da foto
+          const reactContainer = document.createElement('div');
+          reactContainer.className = 'reactions-container';
+          reactContainer.onclick = (e) => e.stopPropagation();
+          reactContainer.innerHTML = generateReactionsHTML('fotos', photoId);
+          wrapper.appendChild(reactContainer);
+
+          itemCard.appendChild(wrapper);
+
+          if (state.fotos.currentGroup === 0 && legendasCasuais[index]) {
+            const caption = document.createElement('div');
+            caption.className = 'foto-caption';
+            caption.textContent = legendasCasuais[index];
+            itemCard.appendChild(caption);
+          }
+
+          scrollContainer.appendChild(itemCard);
         });
       }
       setTimeout(() => checkArrows(document.querySelector('#card-fotos .scroll-wrapper')), 50);
@@ -524,9 +861,20 @@
             const thumb = document.createElement('img'); thumb.src = v.thumb; thumb.className = 'media-thumbnail-img';
             thumbsContainer.appendChild(thumb);
           }
+          
+          const videoId = `video_${state.videos.currentGroup}_${index}`;
           const wrapper = document.createElement('div'); wrapper.className = 'video-wrapper';
           const iframe = document.createElement('iframe'); iframe.src = v.src; iframe.allowFullscreen = true;
           wrapper.appendChild(iframe);
+          
+          // Adiciona curtidas sobre a moldura do iframe
+          const reactContainer = document.createElement('div');
+          reactContainer.className = 'reactions-container';
+          reactContainer.onclick = (e) => e.stopPropagation();
+          reactContainer.style.pointerEvents = 'auto'; // Garante que é clicável acima do iframe
+          reactContainer.innerHTML = generateReactionsHTML('videos', videoId);
+          wrapper.appendChild(reactContainer);
+
           scrollContainer.appendChild(wrapper);
         });
       }
@@ -558,9 +906,10 @@
     inicializarDados();
 
     // ==========================================
-    // LÓGICA DE GALERIA LIGHTBOX (ZOOM TELA CHEIA)
+    // LÓGICA DE GALERIA LIGHTBOX DE IMAGENS 
     // ==========================================
     let currentPhotoIndex = 0;
+    let currentPhotoFullId = '';
 
     function openLightbox(index) {
       currentPhotoIndex = index;
@@ -569,7 +918,12 @@
     }
 
     function atualizarLightbox() {
+      currentPhotoFullId = `foto_${state.fotos.currentGroup}_${currentPhotoIndex}`;
       document.getElementById('lightbox-img').src = fotosGaleriaAtual[currentPhotoIndex];
+      
+      // Atualiza painel de likes interno da foto
+      document.getElementById('lb-reactions-container').innerHTML = generateReactionsHTML('fotos', currentPhotoFullId);
+
       document.getElementById('lb-prev').style.display = currentPhotoIndex > 0 ? 'flex' : 'none';
       document.getElementById('lb-next').style.display = currentPhotoIndex < fotosGaleriaAtual.length - 1 ? 'flex' : 'none';
     }
@@ -586,7 +940,7 @@
     }
 
     // ==========================================
-    // LÓGICA DE ROLAGEM E SETAS DINÂMICAS E ATALHOS
+    // ROLAGEM, SETAS DINÂMICAS E ATALHOS
     // ==========================================
     function scrollMedia(btn, direcao, event) {
       if(event) event.stopPropagation();
@@ -614,29 +968,27 @@
       container.addEventListener('scroll', () => checkArrows(container.parentElement));
     });
 
-    // Função de Rolagem Aprimorada para o Centro com Efeito Brilho
+    // Função de Rolagem Aprimorada
     function scrollToSection(id) { 
       const cardId = id === 'contato' ? 'card-contato' : 'card-' + id;
       const cardEl = document.getElementById(cardId);
+      const headerOffset = document.querySelector('.sticky-header').offsetHeight;
       
       if (cardEl) {
-        // Rola até deixar a caixa no centro da tela
-        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Remove a classe se existir, força atualização e adiciona de novo para reiniciar a animação
+        const elementPosition = cardEl.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 20;
+
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
         cardEl.classList.remove('glow-effect');
         void cardEl.offsetWidth; 
         cardEl.classList.add('glow-effect');
-        
-        // Remove o brilho após os 2 segundos definidos no CSS
-        setTimeout(() => {
-          cardEl.classList.remove('glow-effect');
-        }, 2000);
+        setTimeout(() => cardEl.classList.remove('glow-effect'), 2000);
       }
     }
 
     // ==========================================
-    // LÓGICA DO BOTÃO TOPO (FLUTUANTE)
+    // POPUPS E BOTÃO TOPO
     // ==========================================
     window.addEventListener('scroll', () => {
       const btnTopo = document.getElementById('btnTopo');
@@ -647,10 +999,7 @@
       }
     });
 
-    // ==========================================
-    // LÓGICA DO POPUP DE CONTATO
-    // ==========================================
-    let popupEl = null, isDragging = false, offset = { x: 0, y: 0 };
+    let popupEl = null, isDraggingContact = false, offsetContact = { x: 0, y: 0 };
 
     function mostrarPopup(tipo) {
       const isWpp = tipo === 'whatsapp';
@@ -676,23 +1025,21 @@
       alert("Copiado com sucesso!"); fecharPopup();
     }
 
-    // Arrasto do popup de contato
     document.addEventListener('mousedown', e => {
       if (e.target.closest('#popup p')) {
-        isDragging = true;
+        isDraggingContact = true;
         const rect = popupEl.getBoundingClientRect();
-        offset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        offsetContact = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       }
     });
     document.addEventListener('mousemove', e => {
-      if (isDragging && popupEl) {
-        popupEl.style.left = (e.clientX - offset.x) + 'px';
-        popupEl.style.top = (e.clientY - offset.y) + 'px';
+      if (isDraggingContact && popupEl) {
+        popupEl.style.left = (e.clientX - offsetContact.x) + 'px';
+        popupEl.style.top = (e.clientY - offsetContact.y) + 'px';
       }
     });
-    document.addEventListener('mouseup', () => isDragging = false);
+    document.addEventListener('mouseup', () => isDraggingContact = false);
     
-    // Fechar popup clicando fora
     document.addEventListener('click', e => {
       if (popupEl && popupEl.style.display === 'block' && !popupEl.contains(e.target) && !e.target.closest('.icone')) {
         fecharPopup();
@@ -700,22 +1047,27 @@
     });
 
     // ==========================================
-    // LÓGICA DE OPACIDADE AO ROLAR
+    // LÓGICA DE OPACIDADE (Efeito Refletor ao Rolar)
     // ==========================================
     function checkScrollFocus() {
       const elements = document.querySelectorAll('.fade-section');
       const viewHeight = window.innerHeight;
-      const centerOfScreen = viewHeight / 2;
+      const viewWidth = window.innerWidth;
+      const centerY = viewHeight / 2;
+      const centerX = viewWidth / 2;
 
       elements.forEach(el => {
         const rect = el.getBoundingClientRect();
-        if(rect.height === 0) return; 
+        if(rect.height === 0 || rect.width === 0) return; 
         
-        const elCenter = rect.top + rect.height / 2;
-        const distToCenter = Math.abs(elCenter - centerOfScreen);
+        const elCenterY = rect.top + rect.height / 2;
+        const elCenterX = rect.left + rect.width / 2;
+        
+        const distY = Math.abs(elCenterY - centerY);
+        const distX = Math.abs(elCenterX - centerX);
 
-        // Atinge o foco se o centro do elemento estiver na faixa de 1/3 do centro da tela
-        if (distToCenter < viewHeight / 3) {
+        // Somente ilumina se o elemento estiver no campo de visão primário da câmera/tela
+        if (distY < viewHeight / 3 && distX < viewWidth / 1.5) {
           el.classList.add('in-focus');
         } else {
           el.classList.remove('in-focus');
@@ -727,7 +1079,7 @@
     setTimeout(checkScrollFocus, 100);
 
     // ==========================================
-    // LÓGICA DE SOM DE CLIQUE (SINTETIZADO)
+    // SOM DE CLIQUE (Feedback Sensorial)
     // ==========================================
     let audioCtx = null;
     function playClickSound() {
@@ -743,19 +1095,19 @@
       gainNode.connect(audioCtx.destination);
       
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Tom da "Batida"
-      oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05); // Queda do Tom
+      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
+      oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
       
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Volume suave
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); // Fim da reprodução
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
       
       oscillator.start(audioCtx.currentTime);
       oscillator.stop(audioCtx.currentTime + 0.05);
     }
 
     document.addEventListener('click', (e) => {
-      // Dispara o som em qualquer clique que seja interativo
-      if (e.target.closest('.section-title, .card, button, .icone, .atalho-icone, .atalho-texto, .group-arrow, .scroll-arrow, .image-wrapper, .jogo-banner, .lb-arrow, .lb-close, .popup')) {
+      // Impede disparos múltiplos por elementos aninhados muito interativos
+      if (e.target.closest('.section-title, .card, button, .icone, .atalho-icone, .atalho-texto, .group-arrow, .scroll-arrow, .image-wrapper, .jogo-banner, .lb-arrow, .lb-close, .popup, .tab, .random-btn')) {
         playClickSound();
       }
     });
