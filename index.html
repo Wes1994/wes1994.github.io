@@ -29,16 +29,17 @@
       }
       
       .header-top {
-        display: flex; width: 100%; max-width: 800px; margin: 0 auto 8px; gap: 10px; align-items: center;
+        display: flex; width: 100%; max-width: 800px; margin: 0 auto 8px; align-items: center; justify-content: center; position: relative;
       }
 
-      /* Reduzido em 1/3 (de 42px para 28px) */
+      /* Botão Entrar sobreposto no centro */
       .btn-entrar {
+        position: absolute; z-index: 10;
         background-color: #6c7c89; color: white; border: none; border-radius: 8px;
         height: 28px; padding: 0 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
-        transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       }
-      .btn-entrar:hover { background-color: #8495a3; transform: translateY(-2px); }
+      .btn-entrar:hover { background-color: #8495a3; transform: scale(1.05); }
 
       .tabs-container {
         display: flex; flex: 1; background-color: #4a5e6c; border-radius: 8px; overflow: hidden;
@@ -51,21 +52,51 @@
       }
       .tab.active { background-color: #6c7c89; color: #ffffff; }
 
-      /* Atalhos */
+      /* Atalhos e Menus Dropdown (Gavetas) */
       .atalhos { margin: 0 auto; max-width: 800px; }
       .atalhos-lista {
         list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
-        justify-content: center; flex-wrap: wrap;
+        justify-content: center; flex-wrap: wrap; overflow: visible;
       }
-      .atalhos-lista li {
+      .dropdown-wrapper { position: relative; overflow: visible !important; }
+      .atalhos-lista li.dropdown-wrapper, .atalhos-lista li.atalho-icone {
         flex: 0 0 auto; background-color: #4a5e6c; border-radius: 12px; cursor: pointer;
         transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         height: 32px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
       }
-      .atalhos-lista li:hover { background-color: #6c7c89; transform: translateY(-2px); }
-      .atalho-texto { width: 75px; font-size: 0.95rem; text-align: center; } 
+      .atalhos-lista li.dropdown-wrapper:hover, .atalhos-lista li.atalho-icone:hover { background-color: #6c7c89; transform: translateY(-2px); }
+      
+      .dropdown-menu {
+        position: absolute; top: calc(100% + 5px); left: 50%; transform: translateX(-50%) translateY(-10px);
+        background-color: #4a5e6c; border-radius: 8px; list-style: none; padding: 5px 0; margin: 0;
+        opacity: 0; pointer-events: none; transition: 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.4); z-index: 2000; min-width: 120px;
+      }
+      /* Ativado APENAS via classe (.active) inserida pelo clique no JS */
+      .dropdown-wrapper.active .dropdown-menu {
+        opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0);
+      }
+      
+      .dropdown-menu li {
+        padding: 10px 15px; font-size: 0.95rem; text-align: left; height: auto !important; 
+        justify-content: flex-start !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important;
+      }
+      .dropdown-menu li:hover { background-color: #6c7c89 !important; transform: none !important; }
+
+      .atalho-texto { width: 85px; font-size: 0.95rem; text-align: center; } 
+      .dropdown-text { width: 95px; } /* Largura padronizada pelo maior ("Portifólio") */
       .atalho-icone { width: 32px; padding: 0; } 
       .atalho-icone img { height: 20px; width: auto; object-fit: contain; }
+
+      /* Toast "Em Breve" */
+      #toast {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: rgba(47, 61, 72, 0.95); color: white; padding: 15px 30px;
+        border-radius: 12px; font-size: 1.2rem; font-weight: bold; border: 1px solid #6c7c89;
+        z-index: 4000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      }
+      #toast.show { opacity: 1; }
 
       /* Estrutura Deslizante (Swipe) */
       .swipe-viewport {
@@ -87,8 +118,17 @@
       }
       .hero h1 { font-size: 1rem; font-weight: 400; color: #c9d6e2; margin: 0; animation: pulse 2s infinite alternate; }
       
+      #hero-title { transition: opacity 0.4s ease; display: inline-block; white-space: nowrap; }
+
       @keyframes scaleOpacity { to { transform: scale(1.05); opacity: 0.9; } }
       @keyframes pulse { to { transform: scale(1.025); } }
+
+      @keyframes pulseGlow {
+        0% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
+        30% { box-shadow: 0 0 25px 8px rgba(207, 221, 233, 0.5); transform: scale(1.02); }
+        100% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
+      }
+      .glow-effect { animation: pulseGlow 2s ease-out; }
 
       /* Títulos clicáveis */
       .section-title {
@@ -112,29 +152,27 @@
       }
       .card.open { cursor: default; }
 
-      /* Texto expansível simples (Descrição) */
-      .expandable { transition: all 0.3s ease; position: relative; }
-      .expandable .desc-hidden { display: none; }
-      .expandable.open .desc-hidden { display: block; }
-      .expandable::after {
-        content: "❯";
-        display: block; width: fit-content; margin: 5px auto -15px;
-        color: #a0aec0; font-size: 1.5rem; font-weight: 300;
-        transform: rotate(90deg); transition: color 0.3s;
+      /* Modificações da Caixa de Descrição e Posts (Efeito Fade-out Inferior) */
+      .card.expandable {
+        max-height: 165px; overflow: hidden; /* Ajustado matematicamente p/ imagem de 120px + padding 40px + sobra 5px */
+        transition: max-height 0.4s ease, opacity 0.4s ease, box-shadow 0.3s, background-color 0.3s;
       }
-      .expandable.open::after { content: ""; display: none; }
+      .card.expandable.open { max-height: 1500px; }
       
+      .card.expandable::after, .preview-card-fade::after {
+        content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+        background: linear-gradient(transparent, #4a5e6c 90%); pointer-events: none; border-radius: 20px;
+        transition: opacity 0.4s ease;
+      }
+      .card.expandable.open::after { opacity: 0; }
+
+      .preview-card-fade {
+        max-height: 165px; overflow: hidden;
+      }
+
       /* Opacidade de Rolagem */
       .fade-section { opacity: 0.4; transition: opacity 0.4s ease; }
       .fade-section.in-focus { opacity: 1; }
-
-      /* Efeito de pulso de brilho */
-      @keyframes pulseGlow {
-        0% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
-        30% { box-shadow: 0 0 25px 8px rgba(207, 221, 233, 0.5); transform: scale(1.02); }
-        100% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: scale(1); }
-      }
-      .glow-effect { animation: pulseGlow 2s ease-out; }
 
       /* Sistema de Reações (Curtir/Não Curtir) */
       .reactions-container {
@@ -158,7 +196,7 @@
       }
       .random-btn:hover { transform: rotate(180deg); }
 
-      /* Sistema de Contração de Posts */
+      /* Sistema de Contração de Posts (Aba 2) */
       .post-card {
         position: relative; height: 180px; overflow: hidden; display: flex; flex-direction: column;
       }
@@ -226,7 +264,8 @@
       .image-wrapper img { height: 100%; width: auto; display: block; object-fit: cover; }
       .foto-caption {
         font-family: 'Segoe UI', sans-serif; font-size: 0.85rem; color: #a0aec0; text-align: center;
-        margin-top: 8px; width: 100%; max-width: 280px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;
+        margin-top: 8px; width: 100%; max-width: 224px;
+        display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;
       }
 
       /* Vídeos */
@@ -280,24 +319,43 @@
   <!-- Cabeçalho Persistente (Botão Entrar, Abas e Atalhos) -->
   <header class="sticky-header">
     <div class="header-top">
-      <button class="btn-entrar" onclick="playClickSound()">Entrar</button>
       <div class="tabs-container">
         <div class="tab active" onclick="switchTab(0)">Inicial</div>
         <div class="tab" onclick="switchTab(1)">Posts</div>
       </div>
+      <button class="btn-entrar" onclick="playClickSound()">Entrar</button>
     </div>
     
     <div class="atalhos">
       <ul class="atalhos-lista">
-        <li class="atalho-icone" onclick="scrollToSection('contato')">
+        <!-- Gaveta Portifólio -->
+        <li class="dropdown-wrapper" onclick="toggleDropdown(this, event)">
+          <div class="atalho-texto dropdown-text">Portifólio</div>
+          <ul class="dropdown-menu">
+            <li onclick="showToast('Em breve!', event)">Edição</li>
+            <li onclick="showToast('Em breve!', event)">Aguarde</li>
+          </ul>
+        </li>
+
+        <li class="atalho-icone" onclick="scrollToSection('contato', event)">
           <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/icones/contato.png" alt="Contato">
         </li>
-        <li class="atalho-texto" onclick="scrollToSection('fotos')">Fotos</li>
-        <li class="atalho-texto" onclick="scrollToSection('videos')">Vídeos</li>
-        <li class="atalho-texto" onclick="scrollToSection('jogos')">Jogos</li>
+
+        <!-- Gaveta Mídias -->
+        <li class="dropdown-wrapper" onclick="toggleDropdown(this, event)">
+          <div class="atalho-texto dropdown-text">Mídias</div>
+          <ul class="dropdown-menu">
+            <li onclick="scrollToSection('fotos', event)">Fotos</li>
+            <li onclick="scrollToSection('videos', event)">Vídeos</li>
+            <li onclick="scrollToSection('jogos', event)">Jogos</li>
+          </ul>
+        </li>
       </ul>
     </div>
   </header>
+
+  <!-- Elemento para o aviso de "Em breve" -->
+  <div id="toast">Em breve!</div>
 
   <div class="swipe-viewport">
     <div class="swipe-track" id="swipe-track">
@@ -306,25 +364,26 @@
       <div class="swipe-pane">
         <section class="hero">
           <p style="white-space: nowrap;">Espaço Digital</p>
-          <h1>Seja Bem Vindo!</h1>
+          <h1><span id="hero-title">Seja Bem Vindo(a) ao</span></h1>
         </section>
 
         <div class="section-title fade-section" id="sobre" title="Clique para expandir" onclick="toggleCard('card-sobre', event)">Descrição</div>
         <section class="card expandable fade-section" id="card-sobre" onclick="toggleCard('card-sobre', event)">
-          <div class="desc-main">
+          
+          <img src="https://raw.githubusercontent.com/espaco-digital/espaco-digital.github.io/main/espacodigital/imagens/minhafoto.png" alt="Minha Foto" style="float: right; height: 120px; width: auto; border-radius: 8px; margin: 0 0 5px 15px;">
+          <div>
             Página pessoal, mas também profissional. Feita para livre-expressão, exposição de fotos, vídeos, projetos e portifólios em andamento.
           </div>
-          <div class="desc-hidden">
-            <div style="font-size: 1.1rem; font-weight: 600; color: #a0aec0; margin: 15px 0 5px;">Sobre Mim</div>
-            <div>
-              Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
-            </div>
+          
+          <div style="font-size: 1.1rem; font-weight: 600; color: #a0aec0; margin: 20px 0 10px; text-align: center;">Sobre Mim</div>
+          <div>
+            Tenho noções de design gráfico, embora seja mais dedicado à edição de vídeo. Sou entusiasta das IAs. Gosto de dançar a dois, práticas outdoor (embora pratique pouco), etc.
           </div>
         </section>
 
         <!-- PRÉVIA DOS POSTS -->
         <div class="section-title fade-section" onclick="switchTab(1)">Posts</div>
-        <section class="card fade-section" onclick="switchTab(1)" id="post-preview-card" style="min-height: 100px;">
+        <section class="card preview-card-fade fade-section" onclick="switchTab(1)" id="post-preview-card">
           <!-- Injetado pelo renderPosts() -->
         </section>
 
@@ -455,6 +514,59 @@
 
   <script>
     // ==========================================
+    // ANIMAÇÃO DO TÍTULO DE BOAS VINDAS
+    // ==========================================
+    const heroTitles = ["Seja Bem Vindo(a) ao", "Site Pessoal de Wesley!"];
+    let heroIdx = 0;
+    setInterval(() => {
+      const heroEl = document.getElementById('hero-title');
+      if (heroEl) {
+        heroEl.style.opacity = 0;
+        setTimeout(() => {
+          heroIdx = (heroIdx + 1) % heroTitles.length;
+          heroEl.textContent = heroTitles[heroIdx];
+          heroEl.style.opacity = 1;
+        }, 400);
+      }
+    }, 3000);
+
+    // ==========================================
+    // SISTEMA DE TOAST (Notificações)
+    // ==========================================
+    function showToast(msg, event) {
+      if (event) event.stopPropagation();
+      playClickSound();
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+      // Fechar gavetas caso clique em algo que use Toast (ex: Edição)
+      document.querySelectorAll('.dropdown-wrapper').forEach(d => d.classList.remove('active'));
+    }
+
+    // ==========================================
+    // SISTEMA DE GAVETAS (Dropdowns on click)
+    // ==========================================
+    function toggleDropdown(el, event) {
+      if (event) event.stopPropagation();
+      const isActive = el.classList.contains('active');
+      document.querySelectorAll('.dropdown-wrapper').forEach(d => d.classList.remove('active'));
+      if (!isActive) el.classList.add('active');
+      playClickSound();
+    }
+
+    // Fecha as gavetas e popups quando clica em qualquer espaço vazio do site
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-wrapper')) {
+        document.querySelectorAll('.dropdown-wrapper').forEach(d => d.classList.remove('active'));
+      }
+      
+      if (popupEl && popupEl.style.display === 'block' && !popupEl.contains(e.target) && !e.target.closest('.icone')) {
+        fecharPopup();
+      }
+    });
+
+    // ==========================================
     // SISTEMA DE DADOS DE REAÇÕES (Curtidas Globais)
     // ==========================================
     const userReactions = {
@@ -479,12 +591,10 @@
       if(event) event.stopPropagation();
       userReactions[type][id] = 'like';
       updateAllReactionsUI();
-      // Opcional: Feedback visual direto (Brilho/Pop)
       playClickSound();
     }
 
     function updateAllReactionsUI() {
-      // Atualiza todos os elementos na tela que contenham o atributo data-react-id
       document.querySelectorAll('.react-btn-like').forEach(btn => {
         const type = btn.getAttribute('data-type');
         const id = btn.getAttribute('data-id');
@@ -544,7 +654,7 @@
     ];
 
     // ==========================================
-    // DADOS E RENDERIZAÇÃO DOS POSTS (Com Sorteio)
+    // DADOS E RENDERIZAÇÃO DOS POSTS
     // ==========================================
     const postsData = [
       { 
@@ -578,15 +688,14 @@
     }
 
     function renderPosts() {
-      // Renderiza a Prévia na aba Inicial
+      // Prévia
       const previewCard = document.getElementById('post-preview-card');
-      const previewText = postsData[0].content.substring(0, 100) + "...";
+      const previewText = postsData[0].content;
       previewCard.innerHTML = `
         <p style="margin: 0; font-size: 1rem; color: #cfdde9;">"${previewText}"</p>
-        <p style="margin: 10px 0 0; font-size: 0.85rem; color: #a0aec0; text-align: right;">Continuar lendo ❯</p>
       `;
 
-      // Renderiza a lista na aba Posts
+      // Lista inteira na aba Posts
       const listContainer = document.getElementById('posts-list-container');
       listContainer.innerHTML = '';
       
@@ -609,12 +718,12 @@
         listContainer.appendChild(card);
       });
 
-      // Recalcula o foco após a inserção (para que não fiquem translúcidos se não deveriam)
+      // Checa foco das novas cartas criadas
       setTimeout(checkScrollFocus, 100);
     }
 
     // ==========================================
-    // LÓGICA DO LIGHTBOX DE TEXTO (Leitor de Posts)
+    // LÓGICA DO LIGHTBOX DE TEXTO
     // ==========================================
     let currentTextIndex = 0;
     let currentTextPostId = '';
@@ -631,8 +740,6 @@
       
       document.getElementById('tl-title').textContent = post.title;
       document.getElementById('tl-body').innerHTML = `<p>${post.content}</p>`;
-      
-      // Atualiza Reações do Lightbox
       document.getElementById('tl-reactions-container').innerHTML = generateReactionsHTML('posts', post.id);
 
       document.getElementById('tl-prev').style.display = currentTextIndex > 0 ? 'flex' : 'none';
@@ -664,7 +771,6 @@
       track.style.transform = `translateX(${prevTranslate}%)`;
       document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === index));
       
-      // Força o check de foco continuamente por 0.5s enquanto o css desliza para garantir visualização limpa
       let focusCheckInterval = setInterval(checkScrollFocus, 50);
       setTimeout(() => clearInterval(focusCheckInterval), 500);
     }
@@ -723,7 +829,7 @@
     window.addEventListener('touchend', dragEnd);
 
     // ==========================================
-    // LÓGICA DE EXPANDIR CAIXAS (Seções Antigas)
+    // LÓGICA DE EXPANDIR CAIXAS
     // ==========================================
     function toggleCard(cardId, event) {
       if (event && (
@@ -731,7 +837,10 @@
         event.target.closest('.scroll-arrow') ||
         event.target.tagName.toLowerCase() === 'iframe' ||
         event.target.tagName.toLowerCase() === 'a' ||
-        event.target.closest('.image-wrapper') 
+        event.target.closest('.image-wrapper') ||
+        event.target.closest('.dropdown-wrapper') ||
+        event.target.closest('.random-btn') ||
+        event.target.closest('.reactions-container')
       )) {
         return;
       }
@@ -871,7 +980,7 @@
           const reactContainer = document.createElement('div');
           reactContainer.className = 'reactions-container';
           reactContainer.onclick = (e) => e.stopPropagation();
-          reactContainer.style.pointerEvents = 'auto'; // Garante que é clicável acima do iframe
+          reactContainer.style.pointerEvents = 'auto'; // Clicável em cima do iFrame
           reactContainer.innerHTML = generateReactionsHTML('videos', videoId);
           wrapper.appendChild(reactContainer);
 
@@ -921,7 +1030,6 @@
       currentPhotoFullId = `foto_${state.fotos.currentGroup}_${currentPhotoIndex}`;
       document.getElementById('lightbox-img').src = fotosGaleriaAtual[currentPhotoIndex];
       
-      // Atualiza painel de likes interno da foto
       document.getElementById('lb-reactions-container').innerHTML = generateReactionsHTML('fotos', currentPhotoFullId);
 
       document.getElementById('lb-prev').style.display = currentPhotoIndex > 0 ? 'flex' : 'none';
@@ -968,8 +1076,12 @@
       container.addEventListener('scroll', () => checkArrows(container.parentElement));
     });
 
-    // Função de Rolagem Aprimorada
-    function scrollToSection(id) { 
+    // Função de Rolagem
+    function scrollToSection(id, event) { 
+      if(event) event.stopPropagation();
+      // Fechar gavetas ao realizar rolagem por atalhos
+      document.querySelectorAll('.dropdown-wrapper').forEach(d => d.classList.remove('active'));
+
       const cardId = id === 'contato' ? 'card-contato' : 'card-' + id;
       const cardEl = document.getElementById(cardId);
       const headerOffset = document.querySelector('.sticky-header').offsetHeight;
@@ -1040,12 +1152,6 @@
     });
     document.addEventListener('mouseup', () => isDraggingContact = false);
     
-    document.addEventListener('click', e => {
-      if (popupEl && popupEl.style.display === 'block' && !popupEl.contains(e.target) && !e.target.closest('.icone')) {
-        fecharPopup();
-      }
-    });
-
     // ==========================================
     // LÓGICA DE OPACIDADE (Efeito Refletor ao Rolar)
     // ==========================================
@@ -1066,7 +1172,6 @@
         const distY = Math.abs(elCenterY - centerY);
         const distX = Math.abs(elCenterX - centerX);
 
-        // Somente ilumina se o elemento estiver no campo de visão primário da câmera/tela
         if (distY < viewHeight / 3 && distX < viewWidth / 1.5) {
           el.classList.add('in-focus');
         } else {
@@ -1106,8 +1211,7 @@
     }
 
     document.addEventListener('click', (e) => {
-      // Impede disparos múltiplos por elementos aninhados muito interativos
-      if (e.target.closest('.section-title, .card, button, .icone, .atalho-icone, .atalho-texto, .group-arrow, .scroll-arrow, .image-wrapper, .jogo-banner, .lb-arrow, .lb-close, .popup, .tab, .random-btn')) {
+      if (e.target.closest('.section-title, .card, button, .icone, .atalho-icone, .atalho-texto, .group-arrow, .scroll-arrow, .image-wrapper, .jogo-banner, .lb-arrow, .lb-close, .popup, .tab, .random-btn, .dropdown-wrapper')) {
         playClickSound();
       }
     });
