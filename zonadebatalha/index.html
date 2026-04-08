@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -31,8 +30,8 @@ html
         
         #hud-top-bar { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 10px 20px; box-sizing: border-box; }
         
-        /* Barras de Vida Reposicionadas (Canto Superior Esquerdo) */
-        #health-container { position: absolute; top: 15px; left: 20px; width: 33.33vw; max-width: 300px; min-width: 200px; display: flex; flex-direction: column; gap: 5px; pointer-events: auto; }
+        /* Barras de Vida Reduzidas */
+        #health-container { position: absolute; top: 15px; left: 20px; width: 16.66vw; max-width: 150px; min-width: 100px; display: flex; flex-direction: column; gap: 5px; pointer-events: auto; }
         .health-bar-wrapper { position: relative; width: 100%; height: 18px; background-color: #222; border: 1px solid #555; border-radius: 4px; overflow: hidden; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);}
         .health-bar-fill { height: 100%; transition: width 0.2s linear, background 0.3s; }
         .health-bar-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; font-size: 14px; font-weight: bold; line-height: 18px; text-transform: uppercase; color: #fff; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 10; transition: opacity 0.3s; }
@@ -41,14 +40,15 @@ html
         @keyframes blink-critical { 0% { background: linear-gradient(90deg, #dc3545, #ff6b6b); } 50% { background: linear-gradient(90deg, #5a0000, #800000); } 100% { background: linear-gradient(90deg, #dc3545, #ff6b6b); } }
         .bar-critical { animation: blink-critical 0.5s infinite; }
         
-        /* Canto Superior Direito Agrupado (Abates + Tempo) */
-        #right-hud-group { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 140px; pointer-events: none; }
+        /* Canto Superior Direito Agrupado Horizontalmente (Abates + Tempo) */
+        #right-hud-group { display: flex; flex-direction: row; align-items: stretch; justify-content: flex-end; gap: 6px; pointer-events: none; }
+        .hud-box { pointer-events: auto; background: transparent; padding: 5px 10px; border-radius: 5px; box-sizing: border-box; flex: 1; min-width: 105px; max-width: 130px; }
         
-        #stats-container { display: flex; flex-direction: column; align-items: flex-end; pointer-events: auto; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; width: 100%; box-sizing: border-box; }
-        .stat-item { font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 3px; text-shadow: 1px 1px 2px #000; }
+        #stats-container { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+        .stat-item { font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 3px; text-shadow: 1px 1px 2px #000; white-space: nowrap; }
         .stat-item span { color: #ffc107; font-weight: bold; font-size: 16px; }
 
-        #time-container { pointer-events: auto; text-align: center; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; width: 100%; box-sizing: border-box; }
+        #time-container { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #timer-value { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px #000; transition: color 0.3s; }
         @keyframes blink-time { 0% { color: #ff0000; opacity: 1;} 50% { color: #ff0000; opacity: 0.3;} 100% { color: #ff0000; opacity: 1;} }
         .time-warning { color: #ff8800 !important; }
@@ -132,9 +132,9 @@ html
         @keyframes blinkWarning { from { opacity: 0.3; transform: translateY(-50%) scale(0.9); } to { opacity: 1; transform: translateY(-50%) scale(1.1); } }
 
         /* Container Multi-Mensagens */
-        #msg-container { position: absolute; top: 25vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 110; pointer-events: none; align-items: center; white-space: nowrap;}
-        .game-msg { color: #ffc107; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,1), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; animation: fadein 0.3s ease-out; transition: opacity 0.5s ease-out, transform 0.3s ease-out; }
-        @keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        #msg-container { position: absolute; top: 85px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 110; pointer-events: none; align-items: flex-end; white-space: nowrap;}
+        .game-msg { opacity: 0.8; color: #ffc107; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,1), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; animation: fadein 0.3s ease-out forwards; transition: opacity 0.5s ease-out, transform 0.3s ease-out; }
+        @keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 0.8; transform: translateY(0); } }
 
         #coming-soon-popup { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); border: 2px solid #ffc107; padding: 20px 40px; border-radius: 10px; z-index: 999; display: none; font-family: 'Orbitron'; font-size: 2rem; color: #ffc107; box-shadow: 0 0 20px #000;}
 
@@ -197,6 +197,7 @@ html
                 </thead>
                 <tbody>
                     <tr><td class="label">Mover Casco:</td><td class="value">W, A, S, D</td><td class="value">Joystick</td></tr>
+                    <tr><td class="label">Esquiva (Dash):</td><td class="value">Pressionar S</td><td class="value">Analógico p/ Baixo</td></tr>
                     <tr><td class="label">Câmera/Mira:</td><td class="value">Mouse</td><td class="value">Arrastar Dedo</td></tr>
                     <tr><td class="label">Ação/Atirar:</td><td class="value">Mouse Esquerdo</td><td class="value">Botão Atirar</td></tr>
                     <tr><td class="label">Trocar Item:</td><td class="value">Mouse Direito</td><td class="value">Botão Trocar</td></tr>
@@ -299,13 +300,13 @@ html
         <div id="hud-top-bar">
             <div style="width: 120px;"></div> 
             <div id="right-hud-group">
-                <div id="stats-container">
+                <div id="time-container" class="hud-box">
+                    <div style="font-size: 10px; color: #ccc; text-transform: uppercase; margin-bottom: -5px;">Tempo</div>
+                    <div id="timer-value">20:00</div>
+                </div>
+                <div id="stats-container" class="hud-box">
                     <div class="stat-item">Abates: <span id="enemies-value">0/0</span></div>
                     <div class="stat-item">Mortes: <span id="deaths-value">0/3</span></div>
-                </div>
-                <div id="time-container">
-                    <div style="font-size: 10px; color: #ccc; text-transform: uppercase; margin-bottom: -5px;">Tempo</div>
-                    <div id="timer-value">10:00</div>
                 </div>
             </div>
         </div>
@@ -384,7 +385,7 @@ html
             enemy: { maxSpeed: 0.1, accel: 0.002, fireCooldown: 3000, respawnDelay: 3000 },
             boss: { laserWarningTime: 2.0, laserActiveTime: 1.0, laserChance: 0.2 },
             proj: { baseSpeed: 37.5, speed: 112.5, gravity: 25 },
-            game: { totalPhases: 7, initialTime: 600, maxDeaths: 3 },
+            game: { totalPhases: 7, initialTime: 1200, maxDeaths: 3 }, // 20 Minutos
             base: { flagPoleHeight: 7, flagWidth: 2.5, flagHeight: 1.5 },
             phases: [
                 null, 
@@ -469,7 +470,7 @@ html
         };
 
         const PLAYER = {
-            life: 20, maxLife: 20, deaths: 0, ammo: 15, maxAmmo: 15, baseHp: 30, maxBaseHp: 30, gold: 0,
+            life: 20, maxLife: 20, deaths: 0, ammo: 15, maxAmmo: 15, baseHp: 30, maxBaseHp: 30, gold: 0, reflex: 10, maxReflex: 10,
             inv: { repair: 0, baseRepair: 0, shield: 0, laser: 0 },
             firstTimeItem: { repair: true, baseRepair: true, shield: true, laser: true },
             currentItemIdx: -1, buffs: { shield: 0, laser: 0, laserHitBase: false },
@@ -567,7 +568,7 @@ html
 
             updateDebugHUD() { ['repair', 'baseRepair', 'shield', 'laser'].forEach(id => { document.getElementById(`dbg-val-${id}`).textContent = PLAYER.inv[id]; }); },
             
-            msg(text, dur = 3000, color = null) {
+            msg(text, dur = 3000, color = null, isPriority = false) {
                 const c = this.els['msg-container'];
                 const m = document.createElement('div');
                 m.className = 'game-msg';
@@ -577,11 +578,21 @@ html
                         m.style.textShadow = '0 0 10px #f00, 2px 2px 5px #000';
                     }
                 }
+                if (isPriority) {
+                    m.style.order = '-1';
+                }
                 m.textContent = text;
                 c.appendChild(m);
                 
-                if (c.children.length > 3) {
-                    c.removeChild(c.firstChild);
+                if (c.children.length > 5) {
+                    let toRemove = c.firstChild;
+                    for (let i = 0; i < c.children.length; i++) {
+                        if (c.children[i].style.order !== '-1') {
+                            toRemove = c.children[i];
+                            break;
+                        }
+                    }
+                    if (toRemove) c.removeChild(toRemove);
                 }
                 
                 setTimeout(() => {
@@ -750,6 +761,7 @@ html
             keyMap: { arrowup: 'w', arrowdown: 's', arrowleft: 'a', arrowright: 'd', ' ': 'space' }, pauseHoldTimer: null,
             dragData: { active: false, lastX: 0 },
             qDownAt: 0, qTriggeredDebug: false,
+            lastSState: false, lastJoySState: false,
             
             init() {
                 window.addEventListener('keydown', e => this.handleKey(e, true)); 
@@ -788,6 +800,8 @@ html
                 if(STATE.isTouch) this.setupTouch();
                 
                 this.qDownAt = 0;
+                this.lastSState = false;
+                this.lastJoySState = false;
             },
 
             reset() {
@@ -797,6 +811,8 @@ html
                 const joyKnob = document.getElementById('joystick-knob');
                 if (joyKnob) joyKnob.style.transform = 'translate(0,0)';
                 PLAYER.speed = 0;
+                this.lastSState = false;
+                this.lastJoySState = false;
             },
 
             handleKey(e, isDown) {
@@ -831,6 +847,13 @@ html
                 if (STATE.status !== 'playing') return;
                 const mapped = this.keyMap[k] || k; 
                 this.keys[mapped] = isDown;
+
+                if (mapped === 's') {
+                    if (isDown && !this.lastSState) {
+                        GAME.tryDash();
+                    }
+                    this.lastSState = isDown;
+                }
 
                 if (isDown && mapped === 'space' && SCENE_OBJS.tank.visible) {
                     if (STATE.qte.available) GAME.executeQTE();
@@ -878,6 +901,7 @@ html
                     this.joy.id = null;
                     document.getElementById('joystick-knob').style.transform = `translate(0,0)`; 
                     ['w','a','s','d'].forEach(k => this.keys[k]=false); 
+                    this.lastJoySState = false;
                 }, {passive:false});
                 
                 document.getElementById('fire-button-mobile').addEventListener('touchstart', e => { 
@@ -931,7 +955,18 @@ html
                 }, {passive: false});
             },
 
-            updateJoy() { const th = document.getElementById('joystick-area').offsetWidth * 0.15; this.keys['w'] = this.joy.startY < -th; this.keys['s'] = this.joy.startY > th; this.keys['a'] = this.joy.startX < -th; this.keys['d'] = this.joy.startX > th; }
+            updateJoy() { 
+                const th = document.getElementById('joystick-area').offsetWidth * 0.15; 
+                this.keys['w'] = this.joy.startY < -th; 
+                let sPressed = this.joy.startY > th;
+                if (sPressed && !this.lastJoySState) {
+                    GAME.tryDash();
+                }
+                this.lastJoySState = sPressed;
+                this.keys['s'] = sPressed;
+                this.keys['a'] = this.joy.startX < -th; 
+                this.keys['d'] = this.joy.startX > th; 
+            }
         };
 
         let SCENE, CAMERA, RENDERER;
@@ -1395,6 +1430,7 @@ html
                 AUDIO.stopIntro();
                 STATE.phase = 1; PLAYER.gold = 0; PLAYER.deaths = 0; Object.keys(PLAYER.inv).forEach(k => PLAYER.inv[k]=0); PLAYER.currentItemIdx = -1;
                 Object.keys(PLAYER.firstTimeItem).forEach(k => PLAYER.firstTimeItem[k]=true); PLAYER.life = PLAYER.maxLife; PLAYER.baseHp = PLAYER.maxBaseHp; PLAYER.ammo = PLAYER.maxAmmo;
+                PLAYER.reflex = PLAYER.maxReflex;
                 STATE.time = CONFIG.game.initialTime; STATE.stats.level = {shots:0, hits:0, dmgTaken:0, baseDmg:0, deaths:0, kills:0, time:0, score:0, gold:0}; STATE.stats.gen = {...STATE.stats.level};
                 this.start();
             },
@@ -1407,6 +1443,7 @@ html
                 if(!RENDERER) ENGINE.init(); else RENDERER.domElement.style.display = 'block';
 
                 PLAYER.life = PLAYER.maxLife; PLAYER.ammo = PLAYER.maxAmmo; PLAYER.baseHp = PLAYER.maxBaseHp; PLAYER.buffs.shield = PLAYER.buffs.laser = 0; this.setShield(false);
+                PLAYER.reflex = PLAYER.maxReflex;
                 PLAYER.canFire = true; PLAYER.lastFire = 0; PLAYER.incapacitated = false; PLAYER.armorBroken = false; PLAYER.armorBrokenTimer = 0;
                 STATE.phaseData = { totalE: 0, spawnedE: 0, defeatedE: 0, maxSimul: 99, queue: [] }; 
                 
@@ -1535,6 +1572,7 @@ html
                 if (STATE.phase === 'test') { this.startTestArena(); return; }
 
                 STATE.status = 'playing'; PLAYER.life = PLAYER.maxLife; PLAYER.ammo = PLAYER.maxAmmo; PLAYER.baseHp = PLAYER.maxBaseHp; PLAYER.buffs.shield = PLAYER.buffs.laser = 0; this.setShield(false);
+                PLAYER.reflex = PLAYER.maxReflex;
                 STATE.stats.level = {shots:0, hits:0, dmgTaken:0, baseDmg:0, deaths:0, kills:0, time:0, score:0, gold:0}; PLAYER.canFire = true; PLAYER.lastFire = 0;
                 STATE.qte.available = false; PLAYER.incapacitated = false; PLAYER.armorBroken = false; PLAYER.armorBrokenTimer = 0;
                 if (STATE.isTouch) document.getElementById('qte-button-mobile').style.display = 'none';
@@ -1580,7 +1618,8 @@ html
 
                 for(let i=0; i<d.maxSimul && i<d.totalE; i++) this.spawnEnemy();
                 
-                UI.updateHUD(); UI.showScreen('hud'); UI.msg(`Sobreviva à ${STATE.phase >= CONFIG.game.totalPhases ? "última" : STATE.phase + "ª"} onda!`, 3000);
+                UI.updateHUD(); UI.showScreen('hud'); 
+                UI.msg(`Sobreviva à ${STATE.phase >= CONFIG.game.totalPhases ? "última" : STATE.phase + "ª"} onda!`, 3000, null, true);
                 this.startTimers();
                 AUDIO.playBGM();
             },
@@ -1742,6 +1781,45 @@ html
 
             setShield(on) { SCENE_OBJS.tankGrp.traverse(c=>{if(c.isMesh) c.material = on ? SCENE_OBJS.mats.shield : c.userData.origMat;}); },
 
+            tryDash() {
+                if (STATE.status !== 'playing' || !SCENE_OBJS.tank.visible || PLAYER.incapacitated) return;
+
+                let threatened = false;
+                for (let p of STATE.lists.enemyProj) {
+                    if (!p.mesh.visible) continue;
+                    let d = p.mesh.position.distanceTo(SCENE_OBJS.tank.position);
+                    if (d < 30) {
+                        let toPlayer = new THREE.Vector3().subVectors(SCENE_OBJS.tank.position, p.mesh.position).normalize();
+                        let projDir = p.mesh.userData.vel.clone().normalize();
+                        if (projDir.dot(toPlayer) > 0.4) {
+                            threatened = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (threatened) {
+                    if (PLAYER.reflex >= 5) {
+                        PLAYER.reflex -= 5;
+                        UI.msg("Esquiva Perfeita!", 1500, null);
+                        
+                        PLAYER.speed = -CONFIG.tank.speed * 3.5;
+                        ENGINE.triggerExp(SCENE_OBJS.tank.position, 0x00e5ff, 30, 0.5, 1.0);
+
+                        let wasInvuln = PLAYER.isInvuln;
+                        PLAYER.isInvuln = true;
+                        
+                        if(SCENE_OBJS.tank.userData.dashInvInt) clearTimeout(SCENE_OBJS.tank.userData.dashInvInt);
+                        SCENE_OBJS.tank.userData.dashInvInt = setTimeout(() => {
+                            if (!wasInvuln) PLAYER.isInvuln = false;
+                        }, 600);
+
+                    } else {
+                        UI.msg("Reflexo Esgotado!", 1500, '#ff3333');
+                    }
+                }
+            },
+
             fireProj(shooter = null) {
                 if(STATE.status!=='playing') return;
                 const isE = !!shooter, sObj = isE ? shooter : SCENE_OBJS.tank;
@@ -1874,6 +1952,7 @@ html
                 }
 
                 if (isKami && !forcedType) { UI.msg("Drone Kamikaze no ar!", 3000); }
+                if (type === 'common' && !forcedType) { UI.msg("Inimigo Detectado!", 3000); }
 
                 SCENE.add(e); STATE.lists.enemies.push(e); 
                 if(!forcedType) d.spawnedE++;
@@ -1910,24 +1989,26 @@ html
             takeDamage(baseAmt, source = 'unknown', isCrit = false, fromBehind = false) {
                 if(STATE.debug.invuln || PLAYER.life <= 0) return;
                 
-                let amt = baseAmt;
+                let finalAmt = baseAmt;
+
+                if (isCrit || fromBehind || source === 'laser') {
+                    if (!(source === 'laser' && baseAmt === 999)) finalAmt *= 2;
+                } else if (PLAYER.armorBroken) {
+                    if (!(source === 'laser' && baseAmt === 999)) finalAmt *= 2;
+                }
+
+                let willDie = (PLAYER.life - finalAmt) <= 0;
 
                 if (isCrit || fromBehind || source === 'laser') {
                     if(!PLAYER.armorBroken) {
                         PLAYER.armorBroken = true;
-                        UI.msg("Blindagem Quebrada!", 2000, '#ff3333');
+                        if(!willDie) UI.msg("Blindagem Quebrada!", 2000, '#ffaa00');
                     }
                     PLAYER.armorBrokenTimer = 5.0;
-                    if (isCrit) UI.msg("Disparo Crítico!", 1500, '#ffaa00');
+                    if (isCrit && !willDie) UI.msg("Disparo Crítico!", 1500, '#ffaa00');
                 }
 
-                if (PLAYER.armorBroken) {
-                    if (source === 'laser' && source.includes('boss')) amt = 999; 
-                    else if (source === 'kamikaze' || source.includes('boss')) amt += 2;
-                    else amt *= 2; 
-                }
-
-                PLAYER.life -= amt; STATE.stats.level.dmgTaken+=amt; STATE.stats.gen.dmgTaken+=amt; PLAYER.addScore(-10); UI.updateHUD();
+                PLAYER.life -= finalAmt; STATE.stats.level.dmgTaken+=finalAmt; STATE.stats.gen.dmgTaken+=finalAmt; PLAYER.addScore(-10); UI.updateHUD();
                 
                 if(PLAYER.buffs.shield <= 0) this.updatePlayerIncapState();
 
@@ -1965,42 +2046,45 @@ html
             damageEnemy(e, baseAmt, source = 'unknown', isCrit = false, fromBehind = false) {
                 if(!e || !e.visible || e.userData.isTele || e.userData.life <= 0) return; 
                 
-                let amt = baseAmt;
+                let finalAmt = baseAmt;
+
+                if (isCrit || fromBehind || source === 'laser') {
+                    if (!(source === 'laser' && baseAmt === 999)) finalAmt *= 2;
+                } else if (e.userData.armorBroken) {
+                    if (!(source === 'laser' && baseAmt === 999)) finalAmt *= 2;
+                }
+
+                let willDie = (e.userData.life - finalAmt) <= 0;
 
                 if (isCrit || fromBehind || source === 'laser') {
                     if (!e.userData.armorBroken) {
                         e.userData.armorBroken = true;
-                        UI.msg("Blindagem Quebrada!", 2000, '#ff3333');
+                        if (!willDie) UI.msg("Blindagem Quebrada!", 2000, '#ffaa00');
                     }
                     e.userData.armorTimer = 5.0;
-                    if(isCrit) UI.msg("Disparo Crítico!", 1500, '#ffaa00');
+                    if(isCrit && !willDie) UI.msg("Disparo Crítico!", 1500, '#ffaa00');
                 }
 
-                if (e.userData.armorBroken) {
-                    if (!(source === 'laser' && amt === 999)) {
-                        amt *= 2;
-                    }
-                }
-
-                e.userData.life -= amt; 
+                e.userData.life -= finalAmt; 
                 ENGINE.flashEff(e.getObjectByName("model"), null);
 
                 if (!e.userData.hasBeenIncapacitated && e.userData.life > 0) {
                     let threshold = 0;
-                    if (e.userData.type === 'common') threshold = 1; 
-                    else if (e.userData.type === 'boss') threshold = 3; 
-                    else if (e.userData.type === 'finalBoss') threshold = 5; 
+                    let incapTime = 0;
+                    if (e.userData.type === 'common') { threshold = 1; incapTime = 20.0; } 
+                    else if (e.userData.type === 'boss') { threshold = 3; incapTime = 10.0; } 
+                    else if (e.userData.type === 'finalBoss') { threshold = 5; incapTime = 5.0; } 
 
                     if (threshold > 0 && e.userData.life <= threshold) {
                         e.userData.incapacitated = true;
                         e.userData.hasBeenIncapacitated = true;
-                        e.userData.incapTimer = 5.0; 
+                        e.userData.incapTimer = incapTime; 
                         UI.msg("Inimigo Incapacitado", 2000, '#ffaa00');
                         e.getObjectByName("model").traverse(c=>{if(c.isMesh) c.material = SCENE_OBJS.mats.enemyIncap;});
                     }
                 }
 
-                if((e.userData.isBoss || e.userData.isFinalBoss) && amt < 9999 && e.userData.life > 0 && !e.userData.incapacitated) {
+                if((e.userData.isBoss || e.userData.isFinalBoss) && finalAmt < 9999 && e.userData.life > 0 && !e.userData.incapacitated) {
                     if(Math.random()<0.2) this.bossTeleport(e);
                     if(++e.userData.hitsS >= 2) { e.userData.hitsS=0; if(Math.random()<0.2 && e.userData.shieldT<=0) { UI.msg("Chefe ativou Refletor!", 2000); e.userData.shieldT=20; } }
                 }
@@ -2027,6 +2111,7 @@ html
                         if (source !== 'projectile' && source !== 'reflected') {
                             AUDIO.playExplosion();
                         }
+                        UI.msg("Inimigo Eliminado!", 2000, '#ffaa00');
                         SCENE.remove(e);
                     }
                     
@@ -2061,6 +2146,7 @@ html
             respawn() {
                 if(STATE.status!=='playing') return; PLAYER.life=PLAYER.maxLife; PLAYER.ammo=PLAYER.maxAmmo; Object.keys(PLAYER.inv).forEach(k=>PLAYER.inv[k]=0); PLAYER.currentItemIdx=-1; PLAYER.buffs.shield=PLAYER.buffs.laser=0; this.setShield(false); SCENE_OBJS.laser.visible=false; SCENE_OBJS.laser.userData.lights.forEach(l=>l.visible=false);
                 PLAYER.incapacitated = false; PLAYER.armorBroken = false; PLAYER.armorBrokenTimer = 0;
+                PLAYER.reflex = PLAYER.maxReflex;
                 SCENE_OBJS.tank.position.copy(INIT_TANK_POS); SCENE_OBJS.tank.rotation.set(0,Math.PI/4,0); PLAYER.speed=0; SCENE_OBJS.tank.visible=true; PLAYER.isInvuln=true; UI.updateHUD();
                 SCENE_OBJS.tankGrp.traverse(c=>{if(c.isMesh && c.userData.origMat) c.material = c.userData.origMat;});
                 STATE.cameraAngle = SCENE_OBJS.tank.rotation.y;
@@ -2183,6 +2269,13 @@ html
         function updateEntities(dt) {
             ENGINE.updateEnvironment(dt);
 
+            if (!PLAYER.incapacitated && PLAYER.buffs.shield <= 0 && PLAYER.buffs.laser <= 0) {
+                if (PLAYER.reflex < PLAYER.maxReflex) {
+                    PLAYER.reflex += dt * (PLAYER.maxReflex / 10.0);
+                    if (PLAYER.reflex > PLAYER.maxReflex) PLAYER.reflex = PLAYER.maxReflex;
+                }
+            }
+
             if(PLAYER.armorBrokenTimer > 0) {
                 PLAYER.armorBrokenTimer -= dt;
                 if(PLAYER.armorBrokenTimer <= 0) {
@@ -2283,7 +2376,9 @@ html
                     
                     tk.rotation.y += Math.sign(diff) * Math.min(Math.abs(diff), c.rotSpeed * dt * 60 * 4);
                     
-                    if (Math.abs(PLAYER.speed) <= c.speed) {
+                    if (Math.abs(PLAYER.speed) > c.speed) {
+                        PLAYER.speed *= 0.85; 
+                    } else {
                         PLAYER.speed += c.accel;
                         PLAYER.speed = Math.min(PLAYER.speed, c.speed);
                     }
@@ -2459,11 +2554,18 @@ html
             STATE.lists.enemies.forEach(e => {
                 if(e.userData.isTele || e.userData.isDead) return;
                 
+                if (e.userData.incapacitated) {
+                    e.userData.incapTimer -= dt;
+                    if (e.userData.incapTimer <= 0) {
+                        e.userData.incapacitated = false;
+                        e.getObjectByName("model").traverse(c=>{if(c.isMesh&&c.userData.origMat)c.material=c.userData.origMat;});
+                    }
+                }
+
                 if (e.userData.armorBroken) {
                     e.userData.armorTimer -= dt;
                     if (e.userData.armorTimer <= 0) {
                         e.userData.armorBroken = false;
-                        UI.msg("Blindagem Recuperada", 1500, '#00ff00');
                     }
                 }
 
@@ -2750,7 +2852,6 @@ html
                         }
                     }
 
-                    // Tiros do jogador explodem minas
                     if(!d && !isEIdx) {
                         for(let j=STATE.lists.mines.length-1; j>=0; j--) {
                             const mine = STATE.lists.mines[j];
@@ -2783,7 +2884,6 @@ html
                         } 
                     }
 
-                    // Friendly Fire entre Inimigos
                     if (!d && isEIdx) {
                         const hitE = STATE.lists.enemies.find(e => e.visible && e !== m.userData.shooter && !e.userData.isTele && !e.userData.isDead && p.bb.intersectsBox(new THREE.Box3().setFromObject(e.getObjectByName("model") || e)));
                         if (hitE) {
@@ -2886,7 +2986,7 @@ html
                                 if(e.userData.shieldT > 0) { 
                                     e.userData.shieldT = 0; 
                                     e.getObjectByName("model").traverse(c=>{if(c.isMesh&&c.userData.origMat)c.material=c.userData.origMat;}); 
-                                    UI.msg("Escudo do Chefe Destruído!", 1500); 
+                                    UI.msg("Escudo do Chefe Destruído!", 1500, '#ffaa00'); 
                                 } 
                                 else { 
                                     ENGINE.flashEff(e.getObjectByName("model"), null); 
